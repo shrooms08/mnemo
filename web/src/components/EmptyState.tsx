@@ -13,7 +13,7 @@ export function EmptyState({ onSeal }: Props) {
       <button
         className="link-primary"
         type="button"
-        onClick={() => (onSeal ? onSeal() : console.log('TODO: seal flow'))}
+        onClick={() => onSeal?.()}
       >
         Seal your first message <span className="arrow">→</span>
       </button>

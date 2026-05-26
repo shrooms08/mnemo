@@ -5,6 +5,9 @@ import type { useSignAndExecuteTransaction } from '@mysten/dapp-kit'
 import type { WizardState } from '../pages/NewMessage/state'
 import { encryptForVault } from './crypto'
 import { uploadBlob } from './walrus'
+import { withTimeout } from './errors'
+
+const WALLET_TIMEOUT_MS = 30_000
 
 export type SealPhase = 'encrypting' | 'uploading' | 'sealing' | 'done'
 
@@ -59,7 +62,7 @@ export async function sealVault(args: {
     ],
   })
 
-  const submitted = await signAndExecute({ transaction: tx })
+  const submitted = await withTimeout(signAndExecute({ transaction: tx }), WALLET_TIMEOUT_MS)
   if (!('digest' in submitted) || typeof submitted.digest !== 'string') {
     throw new Error('Wallet did not return a transaction digest')
   }

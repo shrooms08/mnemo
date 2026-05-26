@@ -7,6 +7,7 @@ import { sealVault, type SealPhase } from '../../lib/seal'
 import { truncateAddress, formatLongDate, relativeTimeLong } from '../../lib/format'
 import { contentsLabel } from '../../lib/payload'
 import { addrEq } from '../../lib/vaults'
+import { humanizeError } from '../../lib/errors'
 
 const PHASE_PHRASE: Record<SealPhase, string> = {
   encrypting: 'Encrypting your message…',
@@ -65,19 +66,18 @@ export function SealStep() {
     }
     setError(null)
     try {
-      const { txDigest } = await sealVault({
+      await sealVault({
         signAndExecute,
         suiClient,
         packageId,
         state,
         onPhase: setPhase,
       })
-      console.log('Sealed:', txDigest)
       queryClient.invalidateQueries({ queryKey: ['vaults'] })
       // Hold "Sealed." on screen, then route home.
       setTimeout(() => navigate('/messages'), 1500)
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(humanizeError(e))
       setPhase(null)
     }
   }
@@ -193,7 +193,7 @@ export function SealStep() {
 
           {error && (
             <div className="seal-status">
-              <span className="error">Could not seal: {error}</span>
+              <span className="error">{error}</span>
               <button className="try-again" type="button" onClick={onSeal}>
                 Try again
               </button>

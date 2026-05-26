@@ -7,6 +7,9 @@ import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils'
 import { AppHeader } from '../components/AppHeader'
 import { addrEq, fetchVaultById, type VaultRecord } from '../lib/vaults'
 import { truncateAddress, formatLongDate, relativeTimeLong } from '../lib/format'
+import { humanizeError, withTimeout } from '../lib/errors'
+
+const WALLET_TIMEOUT_MS = 30_000
 
 type UnlockPhase = 'opening' | 'decrypting' | 'ready'
 
@@ -100,7 +103,10 @@ export function InboxDetail() {
     })
     try {
       setPhase('opening')
-      const submitted = await signAndExecute({ transaction: tx })
+      const submitted = await withTimeout(
+        signAndExecute({ transaction: tx }),
+        WALLET_TIMEOUT_MS,
+      )
       if (!('digest' in submitted) || typeof submitted.digest !== 'string') {
         throw new Error('Wallet did not return a transaction digest.')
       }
@@ -120,7 +126,7 @@ export function InboxDetail() {
       queryClient.invalidateQueries({ queryKey: ['vaults'] })
       navigate(`/inbox/${vault.objectId}/open`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(humanizeError(e))
       setPhase(null)
     }
   }
@@ -188,7 +194,7 @@ export function InboxDetail() {
 
         {error && (
           <div className="unlock-status">
-            <span className="error">Could not open: {error}</span>
+            <span className="error">{error}</span>
             <button className="try-again" type="button" onClick={onUnlock}>
               Try again
             </button>

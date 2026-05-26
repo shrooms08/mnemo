@@ -13,6 +13,9 @@ import { AppHeader } from '../components/AppHeader'
 import { VaultCard } from '../components/VaultCard'
 import { EmptyState } from '../components/EmptyState'
 import { addrEq, isWaitingForCheckin } from '../lib/vaults'
+import { humanizeError, withTimeout } from '../lib/errors'
+
+const WALLET_TIMEOUT_MS = 30_000
 
 const FEEDBACK_MS = 3000
 
@@ -93,7 +96,7 @@ export function VaultList() {
         arguments: [tx.object(id), clockArg],
       })
     }
-    const submitted = await signAndExecute({ transaction: tx })
+    const submitted = await withTimeout(signAndExecute({ transaction: tx }), WALLET_TIMEOUT_MS)
     if (!('digest' in submitted) || typeof submitted.digest !== 'string') {
       throw new Error('Wallet did not return a transaction digest.')
     }
@@ -115,7 +118,7 @@ export function VaultList() {
       queryClient.invalidateQueries({ queryKey: ['vaults'] })
     } catch (e) {
       clearPending([vaultId])
-      setError(vaultId, e instanceof Error ? e.message : String(e))
+      setError(vaultId, humanizeError(e))
     }
   }
 
@@ -132,7 +135,7 @@ export function VaultList() {
       queryClient.invalidateQueries({ queryKey: ['vaults'] })
     } catch (e) {
       clearPending(ids)
-      setBatchError(e instanceof Error ? e.message : String(e))
+      setBatchError(humanizeError(e))
     } finally {
       setBatchPending(false)
     }
@@ -151,7 +154,7 @@ export function VaultList() {
           <p className="body">Messages you have sealed. They wait until their time.</p>
         </div>
         <div>
-          {batchError && <p className="batch-error">Couldn't check in. {batchError}</p>}
+          {batchError && <p className="batch-error">{batchError}</p>}
           <div className="vault-head-actions">
             {waiting.length >= 2 && (
               <button

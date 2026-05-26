@@ -22,6 +22,7 @@ export function VideoCapture() {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
   const [error, setError] = useState<string | null>(null)
   const [elapsed, setElapsed] = useState(0)
+  const [hitMax, setHitMax] = useState(false)
   const liveRef = useRef<HTMLVideoElement | null>(null)
 
   const phaseRef = useRef(phase)
@@ -78,6 +79,10 @@ export function VideoCapture() {
     try {
       const { blob, durationMs } = await phase.handle.stop()
       const objectUrl = URL.createObjectURL(blob)
+      if (durationMs >= MAX_MS * 0.98) {
+        setHitMax(true)
+        setTimeout(() => setHitMax(false), 3000)
+      }
       setPhase({ kind: 'done', blob, durationMs, objectUrl })
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
@@ -185,6 +190,9 @@ export function VideoCapture() {
         </div>
       </div>
 
+      {hitMax && (
+        <p className="capture-note">Maximum length reached. Recording saved.</p>
+      )}
       {error && <p className="permission-error">{error}</p>}
       {otherKind && phase.kind === 'idle' && (
         <p className="replaces-note">

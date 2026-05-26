@@ -10,6 +10,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 ::selection { background: var(--ink); color: var(--paper); }
 a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
@@ -66,6 +67,10 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
 }
 .app-header-right .sep {
   width: 1px; height: 12px; background: var(--mist);
+}
+.app-header-right .hairline-sep {
+  width: 1px; height: 16px; background: var(--mist);
+  margin-right: var(--s2);
 }
 .app-header-right button.link-quiet {
   font: inherit;
@@ -797,7 +802,7 @@ a.vault-card-link:focus-visible .vault-card {
   text-align: center;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 22px;
+  font-size: 20px;
   color: var(--stone);
   padding: 120px 0;
 }
@@ -1085,6 +1090,29 @@ a.vault-card-link:focus-visible .vault-card {
   font-size: 11px;
   color: var(--stone);
   letter-spacing: 0.04em;
+  border-top: 1px solid var(--mist);
+}
+
+.capture-note {
+  text-align: center;
+  margin-top: var(--s4);
+  font-size: 13px;
+  font-style: italic;
+  font-family: var(--serif);
+  color: var(--stone);
+}
+
+.detail-error-hint {
+  display: block;
+  margin-top: var(--s3);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-style: normal;
+  color: var(--stone);
+  max-width: 44ch;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.55;
 }
 
 /* ── Configure layout ───────────────────────────────────── */

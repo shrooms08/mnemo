@@ -23,6 +23,7 @@ export function AudioCapture() {
   const [error, setError] = useState<string | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const [levels, setLevels] = useState<number[]>(new Array(BAR_COUNT).fill(0))
+  const [hitMax, setHitMax] = useState(false)
 
   const phaseRef = useRef(phase)
   phaseRef.current = phase
@@ -81,6 +82,11 @@ export function AudioCapture() {
     try {
       const { blob, durationMs } = await phase.handle.stop()
       const objectUrl = URL.createObjectURL(blob)
+      // ≥ 98% of MAX means the auto-stop fired (slack for timer skew).
+      if (durationMs >= MAX_MS * 0.98) {
+        setHitMax(true)
+        setTimeout(() => setHitMax(false), 3000)
+      }
       setPhase({ kind: 'done', blob, durationMs, objectUrl })
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
@@ -177,6 +183,9 @@ export function AudioCapture() {
         </div>
       </div>
 
+      {hitMax && (
+        <p className="capture-note">Maximum length reached. Recording saved.</p>
+      )}
       {error && <p className="permission-error">{error}</p>}
       {otherKind && phase.kind === 'idle' && (
         <p className="replaces-note">

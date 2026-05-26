@@ -5,13 +5,14 @@ import { addrEq, fetchVaultById, type VaultRecord } from '../lib/vaults'
 import { fetchBlob } from '../lib/walrus'
 import { decryptVaultBlob, type DecryptedMessage } from '../lib/decrypt'
 import { truncateAddress, formatLongDate } from '../lib/format'
+import { humanizeError } from '../lib/errors'
 
 type Stage =
   | { kind: 'loading-vault' }
   | { kind: 'fetching' }
   | { kind: 'decrypting' }
   | { kind: 'ready'; vault: VaultRecord; message: DecryptedMessage; objectUrl: string | null }
-  | { kind: 'error'; message: string }
+  | { kind: 'error'; title: string; hint?: string }
   | { kind: 'forbidden' }
 
 export function Playback() {
@@ -44,11 +45,32 @@ export function Playback() {
         }
 
         setStage({ kind: 'fetching' })
-        const bytes = await fetchBlob(vault.walrusBlobId)
+        let bytes: Uint8Array
+        try {
+          bytes = await fetchBlob(vault.walrusBlobId)
+        } catch (e) {
+          if (cancelled) return
+          setStage({
+            kind: 'error',
+            title: humanizeError(e),
+            hint: 'Walrus stores blobs for a finite number of epochs. Very old messages may need re-anchoring.',
+          })
+          return
+        }
         if (cancelled) return
 
         setStage({ kind: 'decrypting' })
-        const message = await decryptVaultBlob(bytes, vault.encryptedKey)
+        let message: DecryptedMessage
+        try {
+          message = await decryptVaultBlob(bytes, vault.encryptedKey)
+        } catch {
+          if (cancelled) return
+          setStage({
+            kind: 'error',
+            title: 'We couldn’t decrypt this message.',
+          })
+          return
+        }
         if (cancelled) return
 
         let url: string | null = null
@@ -59,8 +81,7 @@ export function Playback() {
         setStage({ kind: 'ready', vault, message, objectUrl: url })
       } catch (e) {
         if (cancelled) return
-        const msg = e instanceof Error ? e.message : String(e)
-        setStage({ kind: 'error', message: msg })
+        setStage({ kind: 'error', title: humanizeError(e) })
       }
     }
     run()
@@ -97,7 +118,8 @@ export function Playback() {
         )}
         {stage.kind === 'error' && (
           <div className="detail-error">
-            We couldn't decrypt this message. {stage.message}
+            {stage.title}
+            {stage.hint && <span className="detail-error-hint">{stage.hint}</span>}
             <Link to="/inbox">Back to inbox</Link>
           </div>
         )}

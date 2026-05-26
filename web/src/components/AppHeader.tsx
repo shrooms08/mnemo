@@ -18,6 +18,7 @@ export function AppHeader() {
         <NavLink to="/inbox">Inbox</NavLink>
       </nav>
       <div className="app-header-right">
+        <span className="hairline-sep" aria-hidden="true" />
         <span className="addr">{truncateAddress(account?.address)}</span>
         <span className="sep" />
         <button className="link-quiet" type="button" onClick={() => disconnect()}>
