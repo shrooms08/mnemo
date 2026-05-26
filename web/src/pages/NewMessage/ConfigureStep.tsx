@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { isValidSuiAddress } from '@mysten/sui/utils'
+import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit'
 import { useWizard } from './hooks'
-import { formatLongDate, relativeTimeLong } from '../../lib/format'
+import { formatLongDate, looksUnusualAddress, relativeTimeLong } from '../../lib/format'
+import { addrEq } from '../../lib/vaults'
 import { capturedLabel } from '../../lib/payload'
+
+type HistoryStatus = 'empty' | 'has' | 'unknown'
 
 function defaultUnlockMs(): number {
   // 1 year from today, normalized to midnight UTC.
@@ -29,6 +33,8 @@ function captureMetaLabel(state: ReturnType<typeof useWizard>['state']): string 
 export function ConfigureStep() {
   const { state, dispatch } = useWizard()
   const navigate = useNavigate()
+  const account = useCurrentAccount()
+  const suiClient = useSuiClient()
 
   // Guard: if no plaintext captured, send back to step 1.
   if (!state.plaintext) return <Navigate to="/new/capture" replace />
@@ -42,13 +48,44 @@ export function ConfigureStep() {
 
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [editingDays, setEditingDays] = useState(false)
+  // Per-address session cache of on-chain history check results.
+  const historyCacheRef = useRef<Map<string, HistoryStatus>>(new Map())
+  // Re-render trigger so cache mutation surfaces a new warning state.
+  const [, forceRender] = useState(0)
 
-  const recipientValid = isValidSuiAddress(state.recipient.trim())
+  const trimmedRecipient = state.recipient.trim()
+  const recipientValid = isValidSuiAddress(trimmedRecipient)
   const titleValid = state.title.trim().length > 0
   const conditionValid = state.unlockEnabled || state.deadmanEnabled
   const canContinue = recipientValid && titleValid && conditionValid
 
   const showRecipientError = state.recipient.length > 0 && !recipientValid
+  const isSelfSeal = recipientValid && addrEq(trimmedRecipient, account?.address)
+  const looksUnusual = recipientValid && !isSelfSeal && looksUnusualAddress(trimmedRecipient)
+  const historyStatus: HistoryStatus =
+    recipientValid && !isSelfSeal
+      ? (historyCacheRef.current.get(trimmedRecipient.toLowerCase()) ?? 'unknown')
+      : 'unknown'
+  const showNoHistoryWarning = historyStatus === 'empty'
+
+  async function checkHistoryOnBlur() {
+    if (!recipientValid || isSelfSeal) return
+    const key = trimmedRecipient.toLowerCase()
+    if (historyCacheRef.current.has(key)) return
+    try {
+      const balances = await suiClient.getAllBalances({ owner: trimmedRecipient })
+      historyCacheRef.current.set(key, balances.length === 0 ? 'empty' : 'has')
+    } catch {
+      // Network/RPC failure — silently skip. Never block on this signal.
+      historyCacheRef.current.set(key, 'unknown')
+    }
+    forceRender((n) => n + 1)
+  }
+
+  function useMyAddress() {
+    if (!account?.address) return
+    dispatch({ type: 'SET_RECIPIENT', payload: account.address })
+  }
 
   const now = Date.now()
   const relPhrase =
@@ -87,9 +124,20 @@ export function ConfigureStep() {
           </div>
           <div>
             <div className="field">
-              <label className="field-label" htmlFor="addr-field">
-                Recipient address
-              </label>
+              <div className="field-label-row">
+                <label className="field-label" htmlFor="addr-field">
+                  Recipient address
+                </label>
+                {account?.address && (
+                  <button
+                    type="button"
+                    className="use-my-address"
+                    onClick={useMyAddress}
+                  >
+                    Use my address
+                  </button>
+                )}
+              </div>
               <input
                 id="addr-field"
                 className="input mono"
@@ -99,15 +147,35 @@ export function ConfigureStep() {
                 onChange={(e) =>
                   dispatch({ type: 'SET_RECIPIENT', payload: e.target.value.trim() })
                 }
+                onBlur={checkHistoryOnBlur}
               />
               {showRecipientError ? (
                 <p className="field-error">
                   Must be a valid Sui address — 0x followed by 64 hex characters.
                 </p>
               ) : (
-                <p className="field-hint">
-                  The Sui address of the person who should receive this.
-                </p>
+                <>
+                  {(looksUnusual || showNoHistoryWarning) && (
+                    <ul className="field-warnings">
+                      {looksUnusual && (
+                        <li>· This address looks unusual. Double-check the recipient.</li>
+                      )}
+                      {showNoHistoryWarning && (
+                        <li>
+                          · This address has no on-chain history yet. They may not have a
+                          wallet.
+                        </li>
+                      )}
+                    </ul>
+                  )}
+                  {isSelfSeal ? (
+                    <p className="field-hint self-seal">You're sealing this to yourself.</p>
+                  ) : (
+                    <p className="field-hint">
+                      The Sui address of the person who should receive this.
+                    </p>
+                  )}
+                </>
               )}
             </div>
             <div className="field">

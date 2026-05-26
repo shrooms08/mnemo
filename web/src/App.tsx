@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit'
+import { useCurrentAccount } from '@mysten/dapp-kit'
+import { Landing } from './pages/Landing'
 import { VaultList } from './pages/VaultList'
 import { Inbox } from './pages/Inbox'
 import { InboxDetail } from './pages/InboxDetail'
@@ -8,38 +9,6 @@ import { NewMessageWizard } from './pages/NewMessage/NewMessageWizard'
 import { Capture } from './pages/NewMessage/Capture'
 import { ConfigureStep } from './pages/NewMessage/ConfigureStep'
 import { SealStep } from './pages/NewMessage/SealStep'
-
-function ConnectScreen() {
-  return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 'var(--s7)',
-        padding: 'var(--s7)',
-      }}
-    >
-      <h1
-        style={{
-          fontFamily: 'var(--serif)',
-          fontWeight: 400,
-          fontSize: 76,
-          letterSpacing: '-0.026em',
-          margin: 0,
-        }}
-      >
-        Mn<em style={{ color: 'var(--midnight)', fontStyle: 'italic' }}>e</em>mo
-      </h1>
-      <p className="body" style={{ maxWidth: '36ch', textAlign: 'center' }}>
-        A vault for messages that wait.
-      </p>
-      <ConnectButton />
-    </main>
-  )
-}
 
 function RequireAccount({ children }: { children: React.ReactNode }) {
   const account = useCurrentAccount()
@@ -50,7 +19,7 @@ function RequireAccount({ children }: { children: React.ReactNode }) {
 function Root() {
   const account = useCurrentAccount()
   if (account) return <Navigate to="/messages" replace />
-  return <ConnectScreen />
+  return <Landing />
 }
 
 function App() {

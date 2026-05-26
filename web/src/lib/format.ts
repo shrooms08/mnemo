@@ -35,6 +35,15 @@ export function formatLongDate(ms: bigint): string {
   return longDate.format(new Date(Number(ms)))
 }
 
+/** Cheap heuristic: does this address look like a placeholder, all-zeros,
+ *  or contain a long repeated run? Used for non-blocking "double-check" warnings. */
+export function looksUnusualAddress(addr: string): boolean {
+  const body = addr.replace(/^0x/i, '').toLowerCase()
+  if (body.length === 0) return false
+  if (/^0+$/.test(body)) return true
+  return /(.)\1{3}/.test(body)
+}
+
 export function relativeTimeLong(deltaMs: bigint): string {
   const abs = deltaMs < 0n ? -deltaMs : deltaMs
   const ms = Number(abs)

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit'
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWizard } from './hooks'
 import { sealVault, type SealPhase } from '../../lib/seal'
 import { truncateAddress, formatLongDate, relativeTimeLong } from '../../lib/format'
 import { contentsLabel } from '../../lib/payload'
+import { addrEq } from '../../lib/vaults'
 
 const PHASE_PHRASE: Record<SealPhase, string> = {
   encrypting: 'Encrypting your message…',
@@ -43,6 +44,7 @@ export function SealStep() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const suiClient = useSuiClient()
+  const account = useCurrentAccount()
   const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction()
 
   const [checked, setChecked] = useState(false)
@@ -107,6 +109,9 @@ export function SealStep() {
             <div className="k">Recipient</div>
             <div className="v">
               <span className="addr">{truncateAddress(state.recipient)}</span>
+              {addrEq(state.recipient, account?.address) && (
+                <span className="self-tag">· (yourself)</span>
+              )}
             </div>
           </div>
           <div className="summary-row">
