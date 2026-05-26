@@ -7,7 +7,9 @@ import { encryptForVault } from './crypto'
 import { uploadBlob } from './walrus'
 import { withTimeout } from './errors'
 
-const WALLET_TIMEOUT_MS = 30_000
+// 60s — covers locked-wallet flows where the user must enter a password
+// before the tx approval popup appears (Slush in particular chains these).
+const WALLET_TIMEOUT_MS = 60_000
 
 export type SealPhase = 'encrypting' | 'uploading' | 'sealing' | 'done'
 

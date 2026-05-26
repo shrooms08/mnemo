@@ -15,7 +15,8 @@ import { EmptyState } from '../components/EmptyState'
 import { addrEq, isWaitingForCheckin } from '../lib/vaults'
 import { humanizeError, withTimeout } from '../lib/errors'
 
-const WALLET_TIMEOUT_MS = 30_000
+// 60s — see seal.ts for rationale (locked-wallet flows).
+const WALLET_TIMEOUT_MS = 60_000
 
 const FEEDBACK_MS = 3000
 
