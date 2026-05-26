@@ -34,3 +34,25 @@ const longDate = new Intl.DateTimeFormat('en-GB', {
 export function formatLongDate(ms: bigint): string {
   return longDate.format(new Date(Number(ms)))
 }
+
+export function relativeTimeLong(deltaMs: bigint): string {
+  const abs = deltaMs < 0n ? -deltaMs : deltaMs
+  const ms = Number(abs)
+  const years = Math.floor(ms / YEAR)
+  const monthsRem = Math.floor((ms - years * YEAR) / MONTH)
+  if (years > 0) {
+    if (monthsRem > 0) {
+      return `${years} year${years === 1 ? '' : 's'}, ${monthsRem} month${monthsRem === 1 ? '' : 's'}`
+    }
+    return `${years} year${years === 1 ? '' : 's'}`
+  }
+  const months = Math.floor(ms / MONTH)
+  const daysRem = Math.floor((ms - months * MONTH) / DAY)
+  if (months > 0) {
+    if (daysRem > 0) {
+      return `${months} month${months === 1 ? '' : 's'}, ${daysRem} day${daysRem === 1 ? '' : 's'}`
+    }
+    return `${months} month${months === 1 ? '' : 's'}`
+  }
+  return relativeTime(deltaMs)
+}

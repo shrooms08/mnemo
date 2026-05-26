@@ -1,5 +1,10 @@
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit'
 import { VaultList } from './pages/VaultList'
+import { NewMessageWizard } from './pages/NewMessage/NewMessageWizard'
+import { CaptureStep } from './pages/NewMessage/CaptureStep'
+import { ConfigureStep } from './pages/NewMessage/ConfigureStep'
+import { SealStep } from './pages/NewMessage/SealStep'
 
 function ConnectScreen() {
   return (
@@ -33,10 +38,48 @@ function ConnectScreen() {
   )
 }
 
-function App() {
+function RequireAccount({ children }: { children: React.ReactNode }) {
   const account = useCurrentAccount()
-  if (!account) return <ConnectScreen />
-  return <VaultList />
+  if (!account) return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
+function Root() {
+  const account = useCurrentAccount()
+  if (account) return <Navigate to="/messages" replace />
+  return <ConnectScreen />
+}
+
+function App() {
+  const navigate = useNavigate()
+  void navigate
+  return (
+    <Routes>
+      <Route path="/" element={<Root />} />
+      <Route
+        path="/messages"
+        element={
+          <RequireAccount>
+            <VaultList />
+          </RequireAccount>
+        }
+      />
+      <Route
+        path="/new"
+        element={
+          <RequireAccount>
+            <NewMessageWizard />
+          </RequireAccount>
+        }
+      >
+        <Route index element={<Navigate to="/new/capture" replace />} />
+        <Route path="capture" element={<CaptureStep />} />
+        <Route path="configure" element={<ConfigureStep />} />
+        <Route path="seal" element={<SealStep />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
 
 export default App

@@ -1,14 +1,13 @@
+import { useNavigate } from 'react-router-dom'
 import { useMyVaults } from '../hooks/useMyVaults'
 import { AppHeader } from '../components/AppHeader'
 import { VaultCard } from '../components/VaultCard'
 import { EmptyState } from '../components/EmptyState'
 
-function onSealClick() {
-  console.log('TODO: seal flow (next session)')
-}
-
 export function VaultList() {
   const { data: vaults, isLoading, isError, refetch } = useMyVaults()
+  const navigate = useNavigate()
+  const onSealClick = () => navigate('/new/capture')
 
   return (
     <>
