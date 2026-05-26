@@ -1,0 +1,1 @@
+module mnemo::vault;
