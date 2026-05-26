@@ -1,5 +1,8 @@
+import { Link } from 'react-router-dom'
 import type { VaultRecord } from '../lib/vaults'
 import { truncateAddress, relativeTime, formatLongDate } from '../lib/format'
+
+type ViewAs = 'creator' | 'recipient'
 
 type Tone = 'brass' | 'sage' | 'stone'
 
@@ -52,14 +55,23 @@ function smallLine(v: VaultRecord): string {
   return `Sealed ${formatLongDate(v.createdAtMs)}`
 }
 
-export function VaultCard({ vault }: { vault: VaultRecord }) {
+export function VaultCard({
+  vault,
+  viewAs,
+  linkTo,
+}: {
+  vault: VaultRecord
+  viewAs?: ViewAs
+  linkTo?: string
+}) {
   const t = tone(vault)
   const now = BigInt(Date.now())
   const { label, detail } = pillText(vault, now)
-  const counterparty = vault.role === 'recipient' ? vault.creator : vault.recipient
-  const counterpartyLabel = vault.role === 'recipient' ? 'From' : 'To'
+  const perspective: ViewAs = viewAs ?? vault.roles[0] ?? 'creator'
+  const counterparty = perspective === 'recipient' ? vault.creator : vault.recipient
+  const counterpartyLabel = perspective === 'recipient' ? 'From' : 'To'
 
-  return (
+  const card = (
     <article className="vault-card">
       <div className={`vault-seal ${t}`} aria-hidden="true">
         {firstChar(vault.title)}
@@ -88,4 +100,13 @@ export function VaultCard({ vault }: { vault: VaultRecord }) {
       </div>
     </article>
   )
+
+  if (linkTo) {
+    return (
+      <Link to={linkTo} className="vault-card-link">
+        {card}
+      </Link>
+    )
+  }
+  return card
 }

@@ -27,3 +27,15 @@ export async function uploadBlob(payload: Uint8Array, epochs = 5): Promise<strin
   }
   return blobId
 }
+
+export async function fetchBlob(blobId: string): Promise<Uint8Array> {
+  const aggregator = import.meta.env.VITE_WALRUS_AGGREGATOR as string | undefined
+  if (!aggregator) throw new Error('VITE_WALRUS_AGGREGATOR is not set')
+  const url = `${aggregator.replace(/\/$/, '')}/v1/blobs/${encodeURIComponent(blobId)}`
+  const res = await fetch(url, { method: 'GET' })
+  if (!res.ok) {
+    throw new Error(`Could not retrieve from Walrus (${res.status}).`)
+  }
+  const buf = await res.arrayBuffer()
+  return new Uint8Array(buf)
+}

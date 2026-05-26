@@ -8,6 +8,10 @@ export type EncryptedPayload = {
 const MAGIC = new Uint8Array([0x4d, 0x4e, 0x4d, 0x4f]) // "MNMO"
 const VERSION = 1
 
+// Payload kind byte. Recipients use this to pick a MIME type for playback:
+//   0 -> text (UTF-8)
+//   1 -> audio (audio/webm)
+//   2 -> video (video/webm)
 function kindCode(kind: Plaintext['kind']): number {
   if (kind === 'text') return 0
   if (kind === 'audio') return 1

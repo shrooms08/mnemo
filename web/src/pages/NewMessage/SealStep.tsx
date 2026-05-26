@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useWizard } from './hooks'
 import { sealVault, type SealPhase } from '../../lib/seal'
 import { truncateAddress, formatLongDate, relativeTimeLong } from '../../lib/format'
+import { contentsLabel } from '../../lib/payload'
 
 const PHASE_PHRASE: Record<SealPhase, string> = {
   encrypting: 'Encrypting your message…',
@@ -14,12 +15,8 @@ const PHASE_PHRASE: Record<SealPhase, string> = {
 }
 
 function contentsLine(state: ReturnType<typeof useWizard>['state']): string {
-  if (state.plaintext?.kind !== 'text') return '—'
-  const text = state.plaintext.text
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0
-  const bytes = new TextEncoder().encode(text).length + 30
-  const kb = Math.max(1, Math.ceil(bytes / 1024))
-  return `Letter · ${words} words · ~${kb} KB · encrypted`
+  if (!state.plaintext) return '—'
+  return contentsLabel(state.plaintext)
 }
 
 function opensLine(state: ReturnType<typeof useWizard>['state']): React.ReactNode {
@@ -173,6 +170,19 @@ export function SealStep() {
           ) : (
             <div className="seal-status">
               {phase && PHASE_PHRASE[phase]}
+              {phase === 'uploading' && state.plaintext?.kind === 'video' && (
+                <p
+                  style={{
+                    marginTop: 12,
+                    fontSize: 14,
+                    fontFamily: 'var(--serif)',
+                    fontStyle: 'italic',
+                    color: 'var(--stone)',
+                  }}
+                >
+                  This can take a minute for video.
+                </p>
+              )}
             </div>
           )}
 

@@ -1,7 +1,7 @@
 export type Plaintext =
   | { kind: 'text'; text: string }
-  | { kind: 'audio'; blob: Blob }
-  | { kind: 'video'; blob: Blob }
+  | { kind: 'audio'; blob: Blob; durationMs: number }
+  | { kind: 'video'; blob: Blob; durationMs: number }
 
 export type WizardState = {
   plaintext: Plaintext | null

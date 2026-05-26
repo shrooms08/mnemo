@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import { useCurrentAccount, useDisconnectWallet } from '@mysten/dapp-kit'
 import { truncateAddress } from '../lib/format'
 
@@ -7,16 +8,22 @@ export function AppHeader() {
 
   return (
     <header className="app-header">
-      <span className="wordmark">
+      <NavLink to="/messages" className="wordmark">
         Mn<em>e</em>mo
-      </span>
-      <nav className="app-header-right">
+      </NavLink>
+      <nav className="nav-links">
+        <NavLink to="/messages" end>
+          Your vault
+        </NavLink>
+        <NavLink to="/inbox">Inbox</NavLink>
+      </nav>
+      <div className="app-header-right">
         <span className="addr">{truncateAddress(account?.address)}</span>
         <span className="sep" />
         <button className="link-quiet" type="button" onClick={() => disconnect()}>
           Disconnect
         </button>
-      </nav>
+      </div>
     </header>
   )
 }

@@ -1,18 +1,16 @@
-import { useNavigate } from 'react-router-dom'
 import { useCurrentAccount } from '@mysten/dapp-kit'
 import { useMyVaults } from '../hooks/useMyVaults'
 import { AppHeader } from '../components/AppHeader'
 import { VaultCard } from '../components/VaultCard'
-import { EmptyState } from '../components/EmptyState'
 import { addrEq } from '../lib/vaults'
 
-export function VaultList() {
+export function Inbox() {
   const { data: vaults, isLoading, isError, refetch } = useMyVaults()
   const account = useCurrentAccount()
-  const navigate = useNavigate()
-  const onSealClick = () => navigate('/new/capture')
 
-  const sent = (vaults ?? []).filter((v) => addrEq(v.creator, account?.address))
+  const received = (vaults ?? []).filter(
+    (v) => addrEq(v.recipient, account?.address) && v.status !== 'CANCELLED',
+  )
 
   return (
     <>
@@ -20,15 +18,12 @@ export function VaultList() {
 
       <section className="vault-head">
         <div>
-          <p className="eyebrow">Your vault</p>
+          <p className="eyebrow">For you</p>
           <h1 className="h1" style={{ marginTop: 12 }}>
-            Your messages.
+            Messages waiting.
           </h1>
-          <p className="body">Messages you have sealed. They wait until their time.</p>
+          <p className="body">Sealed for you. Some are open. Some are still waiting.</p>
         </div>
-        <button className="btn btn-primary" type="button" onClick={onSealClick}>
-          Seal a new message
-        </button>
       </section>
 
       {isLoading && <div className="list-state">Reading the vault…</div>}
@@ -42,12 +37,24 @@ export function VaultList() {
         </div>
       )}
 
-      {!isLoading && !isError && sent.length === 0 && <EmptyState onSeal={onSealClick} />}
+      {!isLoading && !isError && received.length === 0 && (
+        <div className="inbox-empty">
+          <h1 className="h1">Nothing for you yet.</h1>
+          <p className="body">
+            When someone seals a message for your address, it will appear here.
+          </p>
+        </div>
+      )}
 
-      {!isLoading && !isError && sent.length > 0 && (
+      {!isLoading && !isError && received.length > 0 && (
         <div className="vault-list">
-          {sent.map((v) => (
-            <VaultCard key={v.objectId} vault={v} viewAs="creator" />
+          {received.map((v) => (
+            <VaultCard
+              key={v.objectId}
+              vault={v}
+              viewAs="recipient"
+              linkTo={`/inbox/${v.objectId}`}
+            />
           ))}
         </div>
       )}

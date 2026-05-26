@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { isValidSuiAddress } from '@mysten/sui/utils'
 import { useWizard } from './hooks'
 import { formatLongDate, relativeTimeLong } from '../../lib/format'
+import { capturedLabel } from '../../lib/payload'
 
 function defaultUnlockMs(): number {
   // 1 year from today, normalized to midnight UTC.
@@ -21,12 +22,8 @@ function dateInputValue(ms: number): string {
 }
 
 function captureMetaLabel(state: ReturnType<typeof useWizard>['state']): string {
-  if (state.plaintext?.kind !== 'text') return ''
-  const text = state.plaintext.text
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0
-  const bytes = new TextEncoder().encode(text).length + 30
-  const kb = Math.max(1, Math.ceil(bytes / 1024))
-  return `Letter · ${words} words · ~${kb} KB`
+  if (!state.plaintext) return ''
+  return capturedLabel(state.plaintext)
 }
 
 export function ConfigureStep() {
