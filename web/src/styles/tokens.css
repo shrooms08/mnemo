@@ -1,0 +1,17 @@
+:root {
+  --ink:        #1C1A17;
+  --paper:      #F4EFE6;
+  --paper-2:    #ECE5D6;
+  --midnight:   #2C4660;
+  --brass:      #B08442;
+  --sage:       #6B7B5E;
+  --stone:      #8A8278;
+  --mist:       #D9D3C7;
+
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+
+  --serif: "Newsreader", "Source Serif 4", Georgia, serif;
+  --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}

@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mnemo — Visual System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── Tokens ─────────────────────────────────────────────────── */
+  :root {
+    /* Color */
+    --ink:        #1C1A17;   /* near-black, warm */
+    --paper:      #F4EFE6;   /* warm cream background */
+    --paper-2:    #ECE5D6;   /* slightly deeper paper, for nested surfaces */
+    --midnight:   #2C4660;   /* deep considered blue */
+    --brass:      #B08442;   /* warm muted ochre */
+    --sage:       #6B7B5E;   /* quiet olive */
+    --stone:      #8A8278;   /* secondary text */
+    --mist:       #D9D3C7;   /* hairline borders, dividers */
+
+    /* Spacing — 4px base */
+    --s1: 4px;   --s2: 8px;   --s3: 12px;  --s4: 16px;
+    --s5: 24px;  --s6: 32px;  --s7: 48px;  --s8: 64px;  --s9: 96px;
+
+    /* Type */
+    --serif: "Newsreader", "Source Serif 4", Georgia, serif;
+    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+
+  /* ── Base ──────────────────────────────────────────────────── */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--ink); color: var(--paper); }
+
+  a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+  /* ── Layout ────────────────────────────────────────────────── */
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: var(--s7) var(--s7) var(--s9);
+  }
+  @media (max-width: 720px) {
+    .page { padding: var(--s6) var(--s5) var(--s8); }
+  }
+
+  /* Top meta strip */
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: var(--s5);
+    border-bottom: 1px solid var(--mist);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+  .meta span + span { text-align: right; }
+
+  /* ── Hero ──────────────────────────────────────────────────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: var(--s8);
+    padding: var(--s9) 0 var(--s9);
+    border-bottom: 1px solid var(--mist);
+  }
+  @media (max-width: 820px) { .hero { grid-template-columns: 1fr; gap: var(--s7); padding: var(--s8) 0; } }
+
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(96px, 16vw, 184px);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    margin: 0;
+    color: var(--ink);
+    font-variation-settings: "opsz" 72;
+  }
+  .wordmark em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--midnight);
+  }
+  .hero-meta {
+    align-self: end;
+    padding-bottom: var(--s3);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin: 0 0 var(--s5);
+  }
+  .manifesto {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 300;
+    color: var(--ink);
+    max-width: 38ch;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .manifesto em { color: var(--midnight); font-style: italic; }
+
+  /* ── Section scaffold ──────────────────────────────────────── */
+  section.spec {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--s7);
+    padding: var(--s9) 0;
+    border-bottom: 1px solid var(--mist);
+  }
+  @media (max-width: 820px) {
+    section.spec { grid-template-columns: 1fr; gap: var(--s5); padding: var(--s8) 0; }
+  }
+  .section-head .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    display: block;
+    margin-bottom: var(--s4);
+  }
+  .section-head h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--s4);
+    color: var(--ink);
+  }
+  .section-head p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--stone);
+    margin: 0;
+    max-width: 22ch;
+    text-wrap: pretty;
+  }
+
+  /* ── 01 · Color ────────────────────────────────────────────── */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--mist);
+    border: 1px solid var(--mist);
+  }
+  @media (max-width: 780px) { .swatches { grid-template-columns: repeat(2, 1fr); } }
+  .swatch {
+    background: var(--paper);
+    padding: var(--s5);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .swatch.feature { grid-column: span 2; min-height: 240px; }
+  .chip {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    border-radius: 2px;
+  }
+  .swatch.dark .chip { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04); }
+  .swatch .info {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s3);
+    margin-top: var(--s5);
+  }
+  .swatch .name {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .swatch .role {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin: 2px 0 0;
+  }
+  .swatch .hex {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  /* ── 02 · Typography ───────────────────────────────────────── */
+  .type-stack { display: grid; gap: var(--s7); }
+  .type-specimen {
+    border-top: 1px solid var(--mist);
+    padding-top: var(--s5);
+  }
+  .type-specimen .label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--stone);
+    margin-bottom: var(--s4);
+  }
+  .type-specimen .label em { font-style: normal; color: var(--ink); }
+  .specimen-line {
+    font-family: var(--serif);
+    font-size: clamp(48px, 7vw, 84px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0;
+    font-weight: 400;
+    font-variation-settings: "opsz" 72;
+  }
+  .specimen-line .it { font-style: italic; color: var(--midnight); }
+  .specimen-sans {
+    font-family: var(--sans);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+    font-weight: 400;
+    margin: 0;
+    color: var(--ink);
+  }
+  .specimen-sans .light { font-weight: 300; color: var(--stone); }
+
+  /* Scale table */
+  .scale {
+    margin-top: var(--s6);
+    border-top: 1px solid var(--mist);
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 140px;
+    align-items: baseline;
+    gap: var(--s5);
+    padding: var(--s5) 0;
+    border-bottom: 1px solid var(--mist);
+  }
+  @media (max-width: 720px) {
+    .scale-row { grid-template-columns: 90px 1fr; }
+    .scale-row .specs { grid-column: 1 / -1; padding-left: 90px; margin-top: -8px; }
+  }
+  .scale-row .tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--stone);
+  }
+  .scale-row .sample { color: var(--ink); text-wrap: balance; }
+  .scale-row .specs {
+    font-family: var(--mono); font-size: 12px; color: var(--stone);
+    text-align: right; white-space: nowrap;
+  }
+  @media (max-width: 720px) { .scale-row .specs { text-align: left; } }
+
+  .s-display { font-family: var(--serif); font-size: 64px; line-height: 1.06; font-weight: 400; letter-spacing: -0.025em; }
+  .s-h1      { font-family: var(--serif); font-size: 40px; line-height: 1.15; font-weight: 400; letter-spacing: -0.018em; }
+  .s-h2      { font-family: var(--serif); font-size: 28px; line-height: 1.25; font-weight: 400; letter-spacing: -0.012em; }
+  .s-h3      { font-family: var(--sans);  font-size: 18px; line-height: 1.45; font-weight: 500; letter-spacing: -0.005em; }
+  .s-body    { font-family: var(--sans);  font-size: 16px; line-height: 1.625; font-weight: 400; }
+  .s-small   { font-family: var(--sans);  font-size: 13px; line-height: 1.55; font-weight: 400; color: var(--stone); }
+
+  @media (max-width: 720px) {
+    .s-display { font-size: 44px; }
+    .s-h1      { font-size: 30px; }
+  }
+
+  /* ── 03 · Spacing ──────────────────────────────────────────── */
+  .ruler {
+    display: grid;
+    gap: var(--s4);
+  }
+  .ruler-row {
+    display: grid;
+    grid-template-columns: 64px 1fr 80px;
+    align-items: center;
+    gap: var(--s4);
+    padding: var(--s2) 0;
+  }
+  .ruler-row .tag {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--stone);
+  }
+  .ruler-bar {
+    background: var(--ink);
+    height: 14px;
+    border-radius: 1px;
+  }
+  .ruler-row .px {
+    font-family: var(--mono); font-size: 12px; color: var(--ink);
+    text-align: right;
+  }
+  .ruler-note {
+    margin-top: var(--s5);
+    padding-top: var(--s5);
+    border-top: 1px solid var(--mist);
+    font-size: 14px;
+    color: var(--stone);
+    max-width: 56ch;
+  }
+
+  /* ── 04 · Components ───────────────────────────────────────── */
+  .comp { display: grid; gap: var(--s7); }
+  .comp-block {
+    border-top: 1px solid var(--mist);
+    padding-top: var(--s5);
+  }
+  .comp-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--stone);
+    margin-bottom: var(--s5);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .comp-label em { font-style: normal; color: var(--ink); }
+
+  /* Button grid */
+  .btn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s5) var(--s5);
+  }
+  @media (max-width: 640px) { .btn-grid { grid-template-columns: 1fr; } }
+  .btn-cell { display: flex; flex-direction: column; gap: var(--s3); align-items: flex-start; }
+  .btn-cell .state {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--stone);
+  }
+
+  /* Buttons — primary */
+  .btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    padding: 14px 22px;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+  }
+  .btn-primary           { background: var(--ink);     color: var(--paper);  border-color: var(--ink); }
+  .btn-primary.is-hover  { background: #000;           color: var(--paper);  border-color: #000; }
+  .btn-primary.is-disabled { background: var(--mist);  color: var(--stone);  border-color: var(--mist); cursor: not-allowed; }
+
+  .btn-secondary           { background: transparent;        color: var(--ink); border-color: var(--ink); }
+  .btn-secondary.is-hover  { background: var(--ink);         color: var(--paper); border-color: var(--ink); }
+  .btn-secondary.is-disabled { background: transparent;      color: var(--stone); border-color: var(--mist); cursor: not-allowed; }
+
+  .btn-ghost           { background: transparent;            color: var(--ink); border-color: transparent; padding-left: 6px; padding-right: 6px; }
+  .btn-ghost.is-hover  { background: transparent;            color: var(--ink); border-color: transparent; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+  .btn-ghost.is-disabled { background: transparent;          color: var(--stone); border-color: transparent; cursor: not-allowed; }
+
+  /* Inputs */
+  .field { display: flex; flex-direction: column; gap: var(--s2); }
+  .field label {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0;
+  }
+  .field .hint {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--stone);
+  }
+  .input, .textarea {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    padding: 10px 0;
+    border-radius: 0;
+    width: 100%;
+    transition: border-color 120ms ease;
+  }
+  .input:focus, .textarea:focus { outline: none; border-color: var(--midnight); }
+  .input::placeholder, .textarea::placeholder { color: var(--stone); font-style: italic; }
+  .textarea {
+    min-height: 96px;
+    border: 1px solid var(--mist);
+    padding: 14px 16px;
+    background: var(--paper);
+    resize: vertical;
+  }
+
+  /* Input grid */
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--s7);
+  }
+  @media (max-width: 640px) { .input-grid { grid-template-columns: 1fr; gap: var(--s5); } }
+
+  /* Cards — sealed vault */
+  .vault-list {
+    display: grid;
+    gap: var(--s4);
+  }
+  .vault-card {
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    padding: var(--s6) var(--s6);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: start;
+    gap: var(--s6);
+    transition: border-color 120ms ease;
+  }
+  .vault-card:hover { border-color: var(--ink); }
+  @media (max-width: 640px) {
+    .vault-card { grid-template-columns: 1fr; gap: var(--s4); padding: var(--s5); }
+  }
+
+  .seal {
+    width: 56px; height: 56px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    display: grid; place-items: center;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 20px;
+    font-style: italic;
+    background: var(--paper-2);
+  }
+  .seal.brass { color: var(--brass); border-color: var(--brass); background: rgba(176,132,66,0.06); }
+  .seal.sage  { color: var(--sage);  border-color: var(--sage);  background: rgba(107,123,94,0.06); }
+
+  .vault-body { min-width: 0; }
+  .vault-kind {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--stone);
+    margin: 0 0 var(--s3);
+  }
+  .vault-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.3;
+    font-weight: 400;
+    margin: 0 0 var(--s2);
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+  .vault-recipient {
+    font-size: 14px;
+    color: var(--stone);
+    margin: 0;
+  }
+  .vault-recipient strong { color: var(--ink); font-weight: 500; }
+
+  .vault-when {
+    text-align: right;
+    min-width: 160px;
+  }
+  @media (max-width: 640px) { .vault-when { text-align: left; min-width: 0; } }
+  .vault-when .date {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink);
+    margin: 0 0 var(--s1);
+  }
+  .vault-when .until {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+
+  /* Modal */
+  .modal-stage {
+    background: var(--paper-2);
+    border: 1px solid var(--mist);
+    padding: var(--s8) var(--s6);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .modal-stage::before {
+    content: "Behind"; position: absolute; top: 14px; left: 16px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--stone);
+  }
+  .modal {
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    box-shadow: 0 30px 60px -30px rgba(28,26,23,0.18), 0 8px 16px -8px rgba(28,26,23,0.08);
+    width: 100%;
+    max-width: 460px;
+    padding: var(--s7) var(--s6) var(--s6);
+  }
+  .modal-eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--brass);
+    margin: 0 0 var(--s4);
+  }
+  .modal h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    margin: 0 0 var(--s4);
+    color: var(--ink);
+  }
+  .modal p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 var(--s6);
+    max-width: 38ch;
+  }
+  .modal-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    justify-content: flex-end;
+  }
+
+  /* ── 05 · Voice ────────────────────────────────────────────── */
+  .voice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s7) var(--s7);
+  }
+  @media (max-width: 720px) { .voice { grid-template-columns: 1fr; gap: var(--s6); } }
+
+  .voice-item { border-top: 1px solid var(--mist); padding-top: var(--s5); }
+  .voice-item .kind {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: var(--s4);
+  }
+  .voice-item .quote {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.35;
+    font-weight: 400;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    margin: 0 0 var(--s4);
+    text-wrap: pretty;
+  }
+  .voice-item .quote em { font-style: italic; color: var(--midnight); }
+  .voice-item .note {
+    font-size: 13px;
+    color: var(--stone);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 44ch;
+  }
+  .voice-item .note .avoid { color: var(--ink); text-decoration: line-through; text-decoration-color: var(--stone); text-decoration-thickness: 1px; }
+
+  /* Cross-brace */
+  .featured-quote {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--mist);
+    border-bottom: 1px solid var(--mist);
+    padding: var(--s6) 0;
+    text-align: center;
+  }
+  .featured-quote .quote {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.25;
+    margin: 0 auto;
+    max-width: 24ch;
+    letter-spacing: -0.018em;
+  }
+  .featured-quote .quote em { font-style: italic; color: var(--midnight); }
+  .featured-quote .kind {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--stone);
+    margin-bottom: var(--s4);
+  }
+
+  /* ── Colophon ─────────────────────────────────────────────── */
+  .colophon {
+    margin-top: var(--s8);
+    padding-top: var(--s6);
+    border-top: 1px solid var(--mist);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--s5);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+  @media (max-width: 640px) { .colophon { grid-template-columns: 1fr; gap: var(--s3); } }
+  .colophon .right { text-align: right; }
+  @media (max-width: 640px) { .colophon .right { text-align: left; } }
+
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- ── Top meta ──────────────────────────────────────────── -->
+  <div class="meta">
+    <span>Mnemo &nbsp;·&nbsp; Visual System</span>
+    <span>Edition 01 &nbsp;·&nbsp; May 2026</span>
+  </div>
+
+  <!-- ── Hero ──────────────────────────────────────────────── -->
+  <header class="hero">
+    <h1 class="wordmark">Mn<em>e</em>mo</h1>
+    <div class="hero-meta">
+      <p class="eyebrow">A visual system, in one page</p>
+      <p class="manifesto">A vault for messages that wait. We design quietly, so the words inside can be loud. The system is <em>warm paper</em>, <em>weighted serif</em>, and the smallest amount of color it takes to mean something.</p>
+    </div>
+  </header>
+
+  <!-- ── 01 · Color ────────────────────────────────────────── -->
+  <section class="spec" id="color">
+    <div class="section-head">
+      <span class="num">01 · Palette</span>
+      <h2>Color</h2>
+      <p>Seven colors. Paper and ink do most of the work. The accents are used like punctuation — rarely, deliberately.</p>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch feature dark" style="background: var(--ink); color: var(--paper);">
+        <div class="chip" style="background: var(--ink); border: 1px solid rgba(244,239,230,0.12);"></div>
+        <div class="info">
+          <div>
+            <p class="name" style="color: var(--paper);">Ink</p>
+            <p class="role" style="color: rgba(244,239,230,0.6);">Body text · Primary</p>
+          </div>
+          <p class="hex" style="color: var(--paper);">#1C1A17</p>
+        </div>
+      </div>
+
+      <div class="swatch feature">
+        <div class="chip" style="background: var(--paper); border: 1px solid var(--mist);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Paper</p>
+            <p class="role">Background · Surface</p>
+          </div>
+          <p class="hex">#F4EFE6</p>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="chip" style="background: var(--midnight);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Midnight</p>
+            <p class="role">Accent · Link</p>
+          </div>
+          <p class="hex">#2C4660</p>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="chip" style="background: var(--brass);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Brass</p>
+            <p class="role">Accent · Sealed</p>
+          </div>
+          <p class="hex">#B08442</p>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="chip" style="background: var(--sage);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Sage</p>
+            <p class="role">Accent · Open</p>
+          </div>
+          <p class="hex">#6B7B5E</p>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="chip" style="background: var(--stone);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Stone</p>
+            <p class="role">Secondary text</p>
+          </div>
+          <p class="hex">#8A8278</p>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="chip" style="background: var(--mist);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Mist</p>
+            <p class="role">Borders · Hairlines</p>
+          </div>
+          <p class="hex">#D9D3C7</p>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="chip" style="background: var(--paper-2); border: 1px solid var(--mist);"></div>
+        <div class="info">
+          <div>
+            <p class="name">Paper · 2</p>
+            <p class="role">Nested surface</p>
+          </div>
+          <p class="hex">#ECE5D6</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 02 · Typography ───────────────────────────────────── -->
+  <section class="spec" id="type">
+    <div class="section-head">
+      <span class="num">02 · Type</span>
+      <h2>Typography</h2>
+      <p>A working serif with weight and history, set against a quiet sans. Both free, both serious.</p>
+    </div>
+
+    <div class="type-stack">
+      <div class="type-specimen">
+        <div class="label">
+          <span>Heading &nbsp;·&nbsp; <em>Newsreader</em> &nbsp;·&nbsp; Production Type · SIL OFL</span>
+          <span>Aa Bb 12</span>
+        </div>
+        <p class="specimen-line">The messages <span class="it">wait</span>.</p>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">
+          <span>Interface &nbsp;·&nbsp; <em>IBM Plex Sans</em> &nbsp;·&nbsp; IBM · SIL OFL</span>
+          <span>Aa Bb 12</span>
+        </div>
+        <p class="specimen-sans">Considered, quiet, <span class="light">unhurried.</span></p>
+      </div>
+
+      <div class="scale" aria-label="Type scale">
+        <div class="scale-row">
+          <div class="tag">Display</div>
+          <div class="sample s-display">For Eliza, on her eighteenth birthday.</div>
+          <div class="specs">Serif · 64 / 68 · 400</div>
+        </div>
+        <div class="scale-row">
+          <div class="tag">H1</div>
+          <div class="sample s-h1">A vault for time-locked messages.</div>
+          <div class="specs">Serif · 40 / 46 · 400</div>
+        </div>
+        <div class="scale-row">
+          <div class="tag">H2</div>
+          <div class="sample s-h2">Sealed messages, opening in their time.</div>
+          <div class="specs">Serif · 28 / 35 · 400</div>
+        </div>
+        <div class="scale-row">
+          <div class="tag">H3</div>
+          <div class="sample s-h3">Recipients &amp; delivery</div>
+          <div class="specs">Sans · 18 / 26 · 500</div>
+        </div>
+        <div class="scale-row">
+          <div class="tag">Body</div>
+          <div class="sample s-body">Once a message is sealed, it cannot be edited or opened until its appointed time. You can change who receives it; you cannot change what it says.</div>
+          <div class="specs">Sans · 16 / 26 · 400</div>
+        </div>
+        <div class="scale-row">
+          <div class="tag">Small</div>
+          <div class="sample s-small">Encrypted at rest. Held by trustees you nominate.</div>
+          <div class="specs">Sans · 13 / 20 · 400</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 · Spacing ──────────────────────────────────────── -->
+  <section class="spec" id="spacing">
+    <div class="section-head">
+      <span class="num">03 · Rhythm</span>
+      <h2>Spacing</h2>
+      <p>A 4px base. Nine steps. Generosity is the default — when in doubt, use the next step up.</p>
+    </div>
+
+    <div>
+      <div class="ruler">
+        <div class="ruler-row"><span class="tag">s1</span><div class="ruler-bar" style="width: 4px;"></div><span class="px">4 px</span></div>
+        <div class="ruler-row"><span class="tag">s2</span><div class="ruler-bar" style="width: 8px;"></div><span class="px">8 px</span></div>
+        <div class="ruler-row"><span class="tag">s3</span><div class="ruler-bar" style="width: 12px;"></div><span class="px">12 px</span></div>
+        <div class="ruler-row"><span class="tag">s4</span><div class="ruler-bar" style="width: 16px;"></div><span class="px">16 px</span></div>
+        <div class="ruler-row"><span class="tag">s5</span><div class="ruler-bar" style="width: 24px;"></div><span class="px">24 px</span></div>
+        <div class="ruler-row"><span class="tag">s6</span><div class="ruler-bar" style="width: 32px;"></div><span class="px">32 px</span></div>
+        <div class="ruler-row"><span class="tag">s7</span><div class="ruler-bar" style="width: 48px;"></div><span class="px">48 px</span></div>
+        <div class="ruler-row"><span class="tag">s8</span><div class="ruler-bar" style="width: 64px;"></div><span class="px">64 px</span></div>
+        <div class="ruler-row"><span class="tag">s9</span><div class="ruler-bar" style="width: 96px;"></div><span class="px">96 px</span></div>
+      </div>
+
+      <p class="ruler-note">
+        s4 and s5 carry most interior spacing. s6 and s7 separate ideas within a page. s8 and s9 mark the start of something new. s1–s3 are reserved for tight pairings — label and field, icon and word.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── 04 · Components ───────────────────────────────────── -->
+  <section class="spec" id="components">
+    <div class="section-head">
+      <span class="num">04 · Primitives</span>
+      <h2>Components</h2>
+      <p>Built from the system. Thin borders, square-ish corners, no glow. Type does the work.</p>
+    </div>
+
+    <div class="comp">
+
+      <!-- Buttons -->
+      <div class="comp-block">
+        <div class="comp-label"><span><em>Buttons</em></span><span>Primary · Secondary · Ghost</span></div>
+
+        <div class="btn-grid">
+          <div class="btn-cell">
+            <button class="btn btn-primary">Seal it</button>
+            <span class="state">Primary · Default</span>
+          </div>
+          <div class="btn-cell">
+            <button class="btn btn-primary is-hover">Seal it</button>
+            <span class="state">Primary · Hover</span>
+          </div>
+          <div class="btn-cell">
+            <button class="btn btn-primary is-disabled" disabled>Seal it</button>
+            <span class="state">Primary · Disabled</span>
+          </div>
+
+          <div class="btn-cell">
+            <button class="btn btn-secondary">Save draft</button>
+            <span class="state">Secondary · Default</span>
+          </div>
+          <div class="btn-cell">
+            <button class="btn btn-secondary is-hover">Save draft</button>
+            <span class="state">Secondary · Hover</span>
+          </div>
+          <div class="btn-cell">
+            <button class="btn btn-secondary is-disabled" disabled>Save draft</button>
+            <span class="state">Secondary · Disabled</span>
+          </div>
+
+          <div class="btn-cell">
+            <button class="btn btn-ghost">Not yet</button>
+            <span class="state">Ghost · Default</span>
+          </div>
+          <div class="btn-cell">
+            <button class="btn btn-ghost is-hover">Not yet</button>
+            <span class="state">Ghost · Hover</span>
+          </div>
+          <div class="btn-cell">
+            <button class="btn btn-ghost is-disabled" disabled>Not yet</button>
+            <span class="state">Ghost · Disabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inputs -->
+      <div class="comp-block">
+        <div class="comp-label"><span><em>Inputs</em></span><span>Text · Textarea</span></div>
+
+        <div class="input-grid">
+          <div class="field">
+            <label for="recipient">Who is this for?</label>
+            <input id="recipient" class="input" type="text" placeholder="Their name" value="Eliza" />
+            <p class="hint">One person, or many. You can change this until the message is sealed.</p>
+          </div>
+          <div class="field">
+            <label for="msg">Your message</label>
+            <textarea id="msg" class="textarea" placeholder="Write to them as if they are listening.">Eliza —
+
+If you are reading this, you are eighteen, and I am somewhere. I want you to know a few things about the year you were born.</textarea>
+            <p class="hint">Words, voice, or video. The form doesn't matter; the seal does.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vault cards -->
+      <div class="comp-block">
+        <div class="comp-label"><span><em>Sealed vault — card</em></span><span>List item</span></div>
+
+        <div class="vault-list">
+
+          <div class="vault-card">
+            <div class="seal brass" aria-hidden="true">M</div>
+            <div class="vault-body">
+              <p class="vault-kind">Letter · 4 pages</p>
+              <h3 class="vault-title">For Eliza, on her eighteenth birthday.</h3>
+              <p class="vault-recipient">To <strong>Eliza Marlow</strong> · Sealed by you, March 2026</p>
+            </div>
+            <div class="vault-when">
+              <p class="date">12 July 2042</p>
+              <p class="until">Opens in 16 years</p>
+            </div>
+          </div>
+
+          <div class="vault-card">
+            <div class="seal" aria-hidden="true">V</div>
+            <div class="vault-body">
+              <p class="vault-kind">Video · 6 min 14 s</p>
+              <h3 class="vault-title">A few things about your mother.</h3>
+              <p class="vault-recipient">To <strong>Theo &amp; June</strong> · Released on their wedding days</p>
+            </div>
+            <div class="vault-when">
+              <p class="date">When the day comes</p>
+              <p class="until">Milestone trigger</p>
+            </div>
+          </div>
+
+          <div class="vault-card">
+            <div class="seal sage" aria-hidden="true">A</div>
+            <div class="vault-body">
+              <p class="vault-kind">Voice note · 2 min 41 s</p>
+              <h3 class="vault-title">Happy fortieth, old friend.</h3>
+              <p class="vault-recipient">To <strong>Anwar Reyes</strong> · A letter from your thirties</p>
+            </div>
+            <div class="vault-when">
+              <p class="date">3 November 2031</p>
+              <p class="until">Opens in 5 years</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="comp-block">
+        <div class="comp-label"><span><em>Modal</em></span><span>Confirmation</span></div>
+
+        <div class="modal-stage">
+          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="seal-title">
+            <p class="modal-eyebrow">Before you seal</p>
+            <h3 id="seal-title">Once sealed, it waits.</h3>
+            <p>This message will open on <strong>12 July 2042</strong> — sixteen years from today. Until then, no one can read it, including you. You can still change who receives it.</p>
+            <div class="modal-actions">
+              <button class="btn btn-ghost">Not yet</button>
+              <button class="btn btn-primary">Seal it</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── 05 · Voice ────────────────────────────────────────── -->
+  <section class="spec" id="voice">
+    <div class="section-head">
+      <span class="num">05 · Voice</span>
+      <h2>Tone &amp; copy</h2>
+      <p>Warm and quiet. Plain words for weighty things. Never crypto, never cheerful, never breathless.</p>
+    </div>
+
+    <div class="voice">
+
+      <div class="voice-item">
+        <p class="kind">Primary button</p>
+        <p class="quote">Seal it.</p>
+        <p class="note">Not <span class="avoid">Submit</span>, not <span class="avoid">Mint message</span>. The verb is the metaphor.</p>
+      </div>
+
+      <div class="voice-item">
+        <p class="kind">Empty state</p>
+        <p class="quote">Nothing waiting yet. <em>Your vault is quiet.</em></p>
+        <p class="note">An empty vault is not a problem to solve — it is a beginning. Acknowledge the silence.</p>
+      </div>
+
+      <div class="voice-item">
+        <p class="kind">Confirmation</p>
+        <p class="quote">Sealed. It will find them in <em>2042</em>.</p>
+        <p class="note">Past tense, then future. We confirm the act, then point at the date — quietly.</p>
+      </div>
+
+      <div class="voice-item">
+        <p class="kind">Field label</p>
+        <p class="quote">Who is this for?</p>
+        <p class="note">Plain questions outperform clever ones. Field labels read like a kind interviewer.</p>
+      </div>
+
+      <div class="featured-quote">
+        <p class="kind">Restraint · Locked state</p>
+        <p class="quote">Not yet. This opens on <em>12 July 2042</em>.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Colophon ─────────────────────────────────────────── -->
+  <footer class="colophon">
+    <div>Mnemo &nbsp;·&nbsp; Visual System v1.0</div>
+    <div style="text-align:center;">Set in Newsreader &amp; IBM Plex</div>
+    <div class="right">May 2026</div>
+  </footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,1837 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mnemo — Product Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── Tokens ─────────────────────────────────────────────────── */
+  :root {
+    --ink:      #1C1A17;
+    --paper:    #F4EFE6;
+    --paper-2:  #ECE5D6;
+    --paper-3:  #E4DCC8;
+    --mist:     #D9D3C7;
+    --stone:    #8A8278;
+    --midnight: #2C4660;
+    --brass:    #B08442;
+    --sage:     #6B7B5E;
+
+    --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+    --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+
+    --serif: "Newsreader", "Source Serif 4", Georgia, serif;
+    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper-2);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--ink); color: var(--paper); }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
+
+  /* ── Case-study shell ──────────────────────────────────────── */
+  .case {
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: var(--s9) var(--s7) var(--s8);
+  }
+  .case-meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--stone);
+    padding-bottom: var(--s5);
+    border-bottom: 1px solid var(--mist);
+  }
+  .case-head {
+    padding: var(--s9) 0 var(--s9);
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--s8);
+    border-bottom: 1px solid var(--mist);
+  }
+  .case-head h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: 0.98;
+    letter-spacing: -0.028em;
+    margin: 0;
+    font-variation-settings: "opsz" 72;
+  }
+  .case-head h1 em { font-style: italic; color: var(--midnight); font-weight: 400; }
+  .case-head .lede {
+    font-family: var(--serif);
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--ink);
+    font-weight: 300;
+    margin: var(--s5) 0 0;
+    max-width: 40ch;
+    text-wrap: pretty;
+  }
+  .case-head .lede em { color: var(--midnight); font-style: italic; }
+  .case-head .right {
+    align-self: end;
+  }
+  .case-head .right .eyebrow { margin-bottom: var(--s4); }
+  .case-head .right ol {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--stone);
+    line-height: 1.95;
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: var(--s7);
+  }
+  .case-head .right ol li::before {
+    content: attr(data-n) " ";
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--stone);
+    margin-right: var(--s3);
+  }
+
+  /* Section meta above each screen */
+  .screen-meta {
+    max-width: 1440px;
+    margin: var(--s9) auto var(--s5);
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: var(--s5);
+  }
+  .screen-meta h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+    margin: var(--s3) 0 0;
+    text-wrap: balance;
+  }
+  .screen-meta .left { max-width: 60ch; }
+  .screen-meta .left p {
+    font-size: 14px;
+    color: var(--stone);
+    line-height: 1.6;
+    margin: var(--s3) 0 0;
+    max-width: 56ch;
+  }
+  .screen-meta .right {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--stone);
+    text-align: right; white-space: nowrap;
+  }
+
+  /* ── Screen artboard ───────────────────────────────────────── */
+  .screen {
+    width: 1440px; max-width: 100%;
+    margin: 0 auto var(--s9);
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    box-shadow: 0 30px 60px -40px rgba(28,26,23,0.18), 0 4px 12px -8px rgba(28,26,23,0.06);
+    overflow: hidden;
+  }
+  .screen__url {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--mist);
+    padding: 10px var(--s5);
+    display: flex; align-items: center; gap: var(--s4);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--stone);
+    letter-spacing: 0.02em;
+  }
+  .screen__url .dots { display: flex; gap: 6px; }
+  .screen__url .dots span {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--mist);
+  }
+  .screen__url .addr { flex: 1; text-align: center; color: var(--stone); }
+  .screen__url .addr em { font-style: normal; color: var(--ink); }
+  .screen__url .badge { color: var(--stone); }
+
+  /* ── App header (inside each screen) ──────────────────────── */
+  .app-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: var(--s5) var(--s8);
+    border-bottom: 1px solid var(--mist);
+    background: var(--paper);
+  }
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+    font-variation-settings: "opsz" 36;
+  }
+  .wordmark em { font-style: italic; color: var(--midnight); font-weight: 400; }
+  .app-header-right {
+    display: flex; align-items: center; gap: var(--s6);
+    font-size: 14px;
+  }
+  .app-header-right a { color: var(--ink); }
+  .app-header-right a:hover { color: var(--midnight); }
+  .app-header-right .addr {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--stone);
+    letter-spacing: 0.02em;
+  }
+  .app-header-right .sep {
+    width: 1px; height: 12px; background: var(--mist);
+  }
+
+  .breadcrumb {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--stone);
+  }
+  .breadcrumb .here { color: var(--ink); }
+  .breadcrumb .sep { margin: 0 var(--s2); color: var(--mist); }
+
+  .icon-close {
+    width: 16px; height: 16px; display: inline-flex;
+    align-items: center; justify-content: center;
+    color: var(--stone);
+  }
+  .icon-close::before {
+    content: "×"; font-size: 22px; font-family: var(--serif);
+    line-height: 1;
+  }
+
+  /* ── Type helpers ──────────────────────────────────────────── */
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin: 0;
+  }
+  .eyebrow.brass { color: var(--brass); }
+  .eyebrow.sage  { color: var(--sage); }
+  .eyebrow.midnight { color: var(--midnight); }
+
+  .display {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: var(--ink);
+    font-variation-settings: "opsz" 72;
+    text-wrap: pretty;
+  }
+  .display em { font-style: italic; color: var(--midnight); }
+  .h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .h1 em { font-style: italic; color: var(--midnight); }
+  .h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .h2 em { font-style: italic; color: var(--midnight); }
+  .h3 {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .body {
+    font-size: 16px;
+    line-height: 1.625;
+    color: var(--stone);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .body.ink { color: var(--ink); }
+  .small {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--stone);
+    margin: 0;
+  }
+  .mono {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────── */
+  .btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 14px 22px;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn-primary:hover { background: #000; }
+  .btn-primary[disabled] { background: var(--mist); color: var(--stone); border-color: var(--mist); cursor: not-allowed; }
+  .btn-secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+  .btn-ghost { background: transparent; color: var(--ink); padding-left: 6px; padding-right: 6px; }
+  .btn-ghost:hover { color: var(--midnight); }
+
+  /* Typographic primary (link-style) */
+  .link-primary {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--midnight);
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--s2);
+    cursor: pointer;
+    text-decoration: none;
+    border-bottom: 1px solid var(--midnight);
+    padding-bottom: 2px;
+    transition: opacity 120ms ease;
+  }
+  .link-primary:hover { opacity: 0.7; }
+  .link-primary .arrow { font-family: var(--serif); font-style: italic; }
+
+  .link-quiet {
+    color: var(--ink);
+    border-bottom: 1px solid var(--mist);
+    padding-bottom: 2px;
+    transition: border-color 120ms ease;
+  }
+  .link-quiet:hover { border-color: var(--ink); }
+
+  /* ── Status pill (typographic) ────────────────────────────── */
+  .status {
+    display: inline-flex; align-items: center; gap: var(--s2);
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    white-space: nowrap;
+  }
+  .status .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--brass);
+  }
+  .status.brass { color: var(--brass); }
+  .status.brass .dot { background: var(--brass); }
+  .status.sage  { color: var(--sage); }
+  .status.sage  .dot { background: var(--sage); }
+  .status .divider {
+    width: 14px; height: 1px; background: currentColor; opacity: 0.4;
+  }
+
+  /* ── Layout helpers ───────────────────────────────────────── */
+  .stack { display: flex; flex-direction: column; }
+  .stack > * + * { margin-top: var(--gap, var(--s4)); }
+  .container { padding: var(--s9) var(--s8); }
+  .container-tight { padding: var(--s8) var(--s8); }
+  .center-col { max-width: 760px; margin: 0 auto; text-align: center; }
+  .hairline { border-top: 1px solid var(--mist); }
+
+  /* ── Section labels ──────────────────────────────────────── */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: var(--s4);
+  }
+  .section-label.brass { color: var(--brass); }
+  .section-label.sage  { color: var(--sage); }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 1 · LANDING                                          */
+  /* ─────────────────────────────────────────────────────────── */
+  .s1-hero {
+    padding: var(--s9) var(--s8) var(--s9);
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: var(--s8);
+    align-items: end;
+    border-bottom: 1px solid var(--mist);
+  }
+  .s1-hero h1 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 76px; line-height: 1.04;
+    letter-spacing: -0.026em;
+    margin: var(--s5) 0 var(--s6);
+    color: var(--ink);
+    text-wrap: pretty;
+    font-variation-settings: "opsz" 72;
+  }
+  .s1-hero h1 em { font-style: italic; color: var(--midnight); font-weight: 400; }
+  .s1-hero .body { max-width: 46ch; margin-bottom: var(--s7); }
+  .s1-hero .figure {
+    background: var(--paper-2);
+    border: 1px solid var(--mist);
+    aspect-ratio: 4 / 5;
+    position: relative;
+    overflow: hidden;
+  }
+  .s1-hero .figure .seal-mark {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 180px;
+    color: var(--ink);
+    opacity: 0.92;
+    font-variation-settings: "opsz" 72;
+  }
+  .s1-hero .figure .seal-mark .year {
+    font-size: 22px;
+    font-style: normal;
+    font-family: var(--mono);
+    color: var(--stone);
+    position: absolute; top: -36px; left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 0.08em;
+  }
+  .s1-hero .figure .corner-l, .s1-hero .figure .corner-r {
+    position: absolute;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    color: var(--stone); text-transform: uppercase;
+  }
+  .s1-hero .figure .corner-l { top: 20px; left: 20px; }
+  .s1-hero .figure .corner-r { bottom: 20px; right: 20px; }
+  .s1-hero .figure .hair {
+    position: absolute;
+    left: 20px; right: 20px;
+    height: 1px;
+    background: var(--mist);
+  }
+  .s1-hero .figure .hair.top { top: 40px; }
+  .s1-hero .figure .hair.bot { bottom: 40px; }
+
+  .s1-three {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s8);
+    padding: var(--s8) var(--s8);
+    border-bottom: 1px solid var(--mist);
+  }
+  .s1-three .col .glyph {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 48px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: var(--s5);
+    font-variation-settings: "opsz" 72;
+    display: inline-block;
+  }
+  .s1-three .col .glyph.midnight { color: var(--midnight); }
+  .s1-three .col .glyph.brass { color: var(--brass); }
+  .s1-three .col .glyph.sage  { color: var(--sage); }
+  .s1-three .col h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 22px; line-height: 1.3; margin: 0 0 var(--s3);
+    letter-spacing: -0.01em;
+  }
+  .s1-three .col p { color: var(--stone); font-size: 15px; line-height: 1.6; margin: 0; max-width: 32ch; }
+
+  .s1-quote {
+    padding: var(--s9) var(--s8);
+    text-align: center;
+    border-bottom: 1px solid var(--mist);
+  }
+  .s1-quote .label { margin-bottom: var(--s5); }
+  .s1-quote .h2 {
+    max-width: 32ch;
+    margin: 0 auto;
+    font-size: 36px;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+  .s1-quote .h2 em { font-style: italic; color: var(--midnight); }
+
+  .s1-footer {
+    padding: var(--s6) var(--s8);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--sans); font-size: 13px; color: var(--stone);
+  }
+  .s1-footer .right { display: flex; gap: var(--s6); }
+  .s1-footer .right a { color: var(--stone); }
+  .s1-footer .right a:hover { color: var(--ink); }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 2 · VAULT LIST                                       */
+  /* ─────────────────────────────────────────────────────────── */
+  .vault-head {
+    padding: var(--s8) var(--s8) var(--s6);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: var(--s6);
+    border-bottom: 1px solid var(--mist);
+  }
+  .vault-head .body { margin-top: var(--s3); max-width: 50ch; }
+  .vault-list {
+    padding: var(--s6) var(--s8) var(--s8);
+    display: grid;
+    gap: var(--s4);
+  }
+  .vault-card {
+    background: var(--paper-2);
+    border: 1px solid var(--mist);
+    padding: var(--s6) var(--s7);
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: start;
+    gap: var(--s6);
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .vault-card:hover { border-color: var(--ink); }
+
+  .vault-seal {
+    width: 56px; height: 56px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    display: grid; place-items: center;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    background: var(--paper);
+    font-variation-settings: "opsz" 36;
+  }
+  .vault-seal.brass { color: var(--brass); border-color: var(--brass); background: rgba(176,132,66,0.05); }
+  .vault-seal.sage  { color: var(--sage);  border-color: var(--sage);  background: rgba(107,123,94,0.05); }
+
+  .vault-body { min-width: 0; }
+  .vault-title { margin: 0 0 var(--s2); }
+  .vault-recipient {
+    font-size: 14px;
+    color: var(--stone);
+    margin: 0 0 var(--s3);
+    display: flex; align-items: center; gap: var(--s2);
+    flex-wrap: wrap;
+  }
+  .vault-recipient .name { color: var(--ink); font-weight: 500; }
+  .vault-recipient .addr {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--stone);
+  }
+  .vault-recipient .sep-dot {
+    width: 3px; height: 3px; border-radius: 50%;
+    background: var(--mist);
+    display: inline-block;
+  }
+  .vault-meta {
+    font-size: 13px; color: var(--stone);
+    line-height: 1.5;
+    max-width: 50ch;
+  }
+  .vault-meta em { font-style: italic; color: var(--ink); font-family: var(--serif); }
+  .vault-side {
+    text-align: right;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: var(--s3);
+    min-width: 220px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    padding: 160px var(--s8);
+    text-align: center;
+    background: var(--paper);
+  }
+  .empty-state .h1 { margin-bottom: var(--s4); }
+  .empty-state .body { margin-bottom: var(--s6); max-width: 38ch; margin-left: auto; margin-right: auto; }
+
+  .variant-label {
+    text-align: center;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--stone);
+    margin: 0 0 var(--s4);
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 3 · RECORD                                           */
+  /* ─────────────────────────────────────────────────────────── */
+  .flow-head {
+    padding: var(--s7) var(--s8) var(--s5);
+    border-bottom: 1px solid var(--mist);
+    display: grid; grid-template-columns: 1fr auto; align-items: start; gap: var(--s6);
+  }
+  .flow-head .h1 { margin: var(--s3) 0 var(--s4); max-width: 30ch; }
+  .flow-head .body { max-width: 50ch; }
+  .flow-head .right { text-align: right; padding-top: 4px; }
+
+  .flow-body { padding: var(--s8) var(--s8); }
+  .flow-footer {
+    padding: var(--s5) var(--s8);
+    border-top: 1px solid var(--mist);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: inline-flex;
+    gap: var(--s6);
+    border-bottom: 1px solid var(--mist);
+    padding-bottom: var(--s2);
+    margin-bottom: var(--s7);
+  }
+  .tabs .tab {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    padding-bottom: var(--s2);
+    position: relative;
+    cursor: pointer;
+    background: none; border: none;
+  }
+  .tabs .tab.is-active { color: var(--ink); }
+  .tabs .tab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -10px;
+    height: 2px;
+    background: var(--brass);
+  }
+
+  /* Record viewport */
+  .viewport {
+    width: 100%;
+    background: var(--ink);
+    border: 1px solid var(--mist);
+    aspect-ratio: 16 / 9;
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .viewport .silhouette {
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 38%, rgba(244,239,230,0.06) 0%, rgba(244,239,230,0.02) 50%, transparent 70%);
+    position: relative;
+  }
+  .viewport .corner {
+    position: absolute;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    color: rgba(244,239,230,0.45); text-transform: uppercase;
+  }
+  .viewport .corner.tl { top: 20px; left: 24px; display: flex; align-items: center; gap: 8px; }
+  .viewport .corner.tr { top: 20px; right: 24px; }
+  .viewport .corner.bl { bottom: 20px; left: 24px; }
+  .viewport .corner.br { bottom: 20px; right: 24px; }
+  .viewport .rec-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--brass);
+  }
+
+  .record-controls {
+    margin-top: var(--s6);
+    display: flex; align-items: center; justify-content: center;
+    gap: var(--s5);
+  }
+  .record-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--brass);
+    border: 6px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--brass);
+    cursor: pointer;
+  }
+  .record-btn:hover { background: #a07634; box-shadow: 0 0 0 1px #a07634; }
+  .timer {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink);
+    min-width: 80px;
+    letter-spacing: 0.04em;
+  }
+  .timer .label {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--stone);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .privacy-note {
+    text-align: center;
+    margin-top: var(--s5);
+    font-size: 13px;
+    color: var(--stone);
+    font-style: italic;
+    font-family: var(--serif);
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 4 · CONFIGURE                                        */
+  /* ─────────────────────────────────────────────────────────── */
+  .configure {
+    padding: var(--s8) var(--s8);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .config-section {
+    padding: var(--s7) 0;
+    border-top: 1px solid var(--mist);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: var(--s7);
+  }
+  .config-section:first-child { border-top: 0; padding-top: var(--s3); }
+  .config-section h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 22px; line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--s2);
+    color: var(--ink);
+  }
+  .config-section .h-note {
+    font-size: 13px; color: var(--stone);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .field-label {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 var(--s2);
+    display: block;
+  }
+  .field-hint {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--stone);
+    margin: var(--s2) 0 0;
+    line-height: 1.5;
+  }
+  .input {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    padding: var(--s3) 0;
+    border-radius: 0;
+  }
+  .input.mono { font-family: var(--mono); font-size: 14px; letter-spacing: 0.02em; }
+  .input:focus { outline: none; border-color: var(--midnight); }
+  .input::placeholder { color: var(--stone); font-style: italic; }
+  .field + .field { margin-top: var(--s6); }
+
+  .toggle {
+    display: inline-flex; align-items: center; gap: var(--s4);
+    font-family: var(--sans);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--stone);
+    font-weight: 500;
+  }
+  .toggle .opt { padding-bottom: 2px; cursor: pointer; }
+  .toggle .opt.on { color: var(--ink); border-bottom: 2px solid var(--brass); }
+
+  .date-display {
+    margin-top: var(--s5);
+    display: flex; align-items: baseline; gap: var(--s5);
+  }
+  .date-display .date {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 36px;
+    line-height: 1.1;
+    color: var(--midnight);
+    letter-spacing: -0.012em;
+    margin: 0;
+  }
+  .date-display .change {
+    font-family: var(--sans); font-size: 13px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--mist);
+    padding-bottom: 2px;
+    cursor: pointer;
+  }
+  .date-display .change:hover { border-color: var(--ink); }
+
+  .switch-sentence {
+    margin-top: var(--s5);
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 50ch;
+  }
+  .switch-sentence .num {
+    font-style: italic;
+    color: var(--midnight);
+    border-bottom: 1px dashed var(--midnight);
+    padding: 0 6px;
+    margin: 0 2px;
+    cursor: pointer;
+  }
+
+  .product-line {
+    padding: var(--s8) 0 0;
+    margin: var(--s6) 0 0;
+    border-top: 1px solid var(--mist);
+  }
+  .product-line p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--stone);
+    max-width: 64ch;
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: pretty;
+  }
+  .product-line p em {
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 5 · REVIEW & SEAL                                    */
+  /* ─────────────────────────────────────────────────────────── */
+  .summary-card {
+    background: var(--paper-2);
+    border: 1px solid var(--mist);
+    padding: var(--s7) var(--s7);
+    margin-top: var(--s7);
+    display: grid;
+    gap: var(--s6);
+  }
+  .summary-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: var(--s5);
+    align-items: baseline;
+    padding-bottom: var(--s5);
+    border-bottom: 1px solid var(--mist);
+  }
+  .summary-row:last-child { padding-bottom: 0; border-bottom: 0; }
+  .summary-row .k {
+    font-family: var(--sans);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--stone);
+  }
+  .summary-row .v {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .summary-row .v.serif {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .summary-row .v .addr {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    margin-right: var(--s3);
+  }
+  .summary-row .v .muted { color: var(--stone); }
+
+  .seal-statement {
+    margin-top: var(--s8);
+    text-align: center;
+    padding: 0 var(--s8);
+  }
+  .seal-statement .h2 {
+    max-width: 30ch;
+    margin: 0 auto var(--s7);
+  }
+
+  .checkbox {
+    display: inline-flex; align-items: center; gap: var(--s3);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .checkbox .box {
+    width: 16px; height: 16px;
+    border: 1px solid var(--ink);
+    display: inline-block;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .checkbox.checked .box::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    background: var(--ink);
+  }
+
+  .seal-actions {
+    margin-top: var(--s7);
+    display: flex; justify-content: center; align-items: center;
+    gap: var(--s6);
+  }
+  .seal-btn {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--paper);
+    background: var(--midnight);
+    border: 1px solid var(--midnight);
+    padding: 18px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .seal-btn[disabled] {
+    background: var(--mist);
+    border-color: var(--mist);
+    color: var(--stone);
+    cursor: not-allowed;
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 6 · RECIPIENT WAITING                                */
+  /* ─────────────────────────────────────────────────────────── */
+  .recipient-stage {
+    padding: var(--s9) var(--s8);
+    text-align: center;
+  }
+  .recipient-stage .eyebrow { margin-bottom: var(--s6); }
+  .recipient-stage .display {
+    max-width: 24ch;
+    margin: 0 auto var(--s5);
+    font-size: 72px;
+    line-height: 1.05;
+  }
+  .recipient-stage .from {
+    font-size: 15px;
+    color: var(--stone);
+    margin: 0 0 var(--s9);
+  }
+  .recipient-stage .from .name { color: var(--ink); }
+
+  .countdown {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 44px;
+    line-height: 1.2;
+    color: var(--midnight);
+    letter-spacing: -0.015em;
+    margin: 0 auto var(--s4);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+  .countdown-date {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--stone);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 var(--s9);
+  }
+  .recipient-note {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--stone);
+    max-width: 38ch;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  .seal-ornament {
+    width: 96px; height: 96px;
+    margin: 0 auto var(--s6);
+    border: 1px solid var(--brass);
+    border-radius: 999px;
+    display: grid; place-items: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 36px;
+    color: var(--brass);
+    background: rgba(176,132,66,0.04);
+    font-variation-settings: "opsz" 36;
+  }
+  .seal-ornament.sage {
+    border-color: var(--sage);
+    color: var(--sage);
+    background: rgba(107,123,94,0.05);
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 7 · UNLOCKED                                         */
+  /* ─────────────────────────────────────────────────────────── */
+  .open-invitation {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 56px;
+    line-height: 1.1;
+    color: var(--midnight);
+    letter-spacing: -0.018em;
+    margin: 0 auto;
+    display: inline-block;
+    border-bottom: 1px solid var(--midnight);
+    padding: 0 var(--s3) var(--s2);
+    cursor: pointer;
+    transition: opacity 120ms ease;
+    font-variation-settings: "opsz" 72;
+  }
+  .open-invitation:hover { opacity: 0.75; }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* SCREEN 8 · PLAYBACK                                         */
+  /* ─────────────────────────────────────────────────────────── */
+  .playback-header {
+    padding: var(--s5) var(--s8);
+    display: flex; align-items: center;
+  }
+  .playback-stage {
+    padding: var(--s6) var(--s8) var(--s8);
+  }
+  .player {
+    background: var(--paper-2);
+    border: 1px solid var(--mist);
+    overflow: hidden;
+  }
+  .player .video {
+    background: var(--ink);
+    aspect-ratio: 16 / 9;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .player .video .glow {
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(244,239,230,0.10), rgba(244,239,230,0.02) 50%, transparent 70%);
+  }
+  .player .play-overlay {
+    position: absolute;
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    border: 1px solid rgba(244,239,230,0.5);
+    display: grid; place-items: center;
+    background: rgba(28,26,23,0.4);
+  }
+  .player .play-overlay .triangle {
+    width: 0; height: 0;
+    border-left: 16px solid var(--paper);
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 4px;
+  }
+  .player .controls {
+    padding: var(--s4) var(--s5);
+    display: flex; align-items: center; gap: var(--s4);
+    border-top: 1px solid var(--mist);
+    background: var(--paper);
+  }
+  .player .controls .pp {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--ink);
+    display: grid; place-items: center;
+  }
+  .player .controls .pp .tri {
+    width: 0; height: 0;
+    border-left: 7px solid var(--ink);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    margin-left: 2px;
+  }
+  .player .controls .timecode {
+    font-family: var(--mono); font-size: 12px; color: var(--stone);
+    letter-spacing: 0.04em;
+  }
+  .player .controls .scrub {
+    flex: 1; height: 2px; background: var(--mist); position: relative;
+  }
+  .player .controls .scrub::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 24%; background: var(--ink);
+  }
+  .player .controls .scrub::after {
+    content: ""; position: absolute; left: 24%; top: 50%;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--ink); transform: translate(-50%, -50%);
+  }
+  .player .controls .vol { color: var(--stone); font-family: var(--mono); font-size: 12px; }
+
+  .playback-meta {
+    margin-top: var(--s6);
+    text-align: left;
+  }
+  .playback-meta .h2 { margin-bottom: var(--s3); }
+  .playback-meta .small { font-size: 13px; color: var(--stone); }
+
+  /* ── Document colophon ───────────────────────────────────── */
+  .colophon {
+    max-width: 1440px;
+    margin: var(--s8) auto 0;
+    padding-top: var(--s6);
+    border-top: 1px solid var(--mist);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--s5);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+  .colophon .right { text-align: right; }
+
+  /* responsiveness: at narrow widths, screens shrink. They retain 1440 logical width via transform-scale? Simpler: allow horizontal scroll if needed. */
+  @media (max-width: 1500px) {
+    .case { padding: var(--s8) var(--s5) var(--s7); }
+    .screen { width: 100%; }
+  }
+  @media (max-width: 900px) {
+    .case-head, .s1-hero { grid-template-columns: 1fr; gap: var(--s6); }
+    .s1-three { grid-template-columns: 1fr; gap: var(--s6); }
+    .vault-head { grid-template-columns: 1fr; }
+    .config-section { grid-template-columns: 1fr; gap: var(--s4); }
+    .summary-row { grid-template-columns: 1fr; gap: var(--s2); }
+    .vault-card { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<main class="case">
+
+  <!-- ── Top meta ──────────────────────────────────────────── -->
+  <div class="case-meta">
+    <span>Mnemo &nbsp;·&nbsp; Product Screens</span>
+    <span>Edition 01 &nbsp;·&nbsp; May 2026</span>
+  </div>
+
+  <!-- ── Document head ─────────────────────────────────────── -->
+  <header class="case-head">
+    <div>
+      <p class="eyebrow">Mnemo · A vault for messages that wait</p>
+      <h1>Eight scre<em>e</em>ns,<br />one quiet system.</h1>
+      <p class="lede">A walkthrough of Mnemo's product surface — from the first arrival, through the act of sealing, to the moment a message is finally <em>read</em>. All screens are set in the system's own type and color.</p>
+    </div>
+    <div class="right">
+      <p class="eyebrow">Contents</p>
+      <ol>
+        <li data-n="01">Landing</li>
+        <li data-n="02">Your messages</li>
+        <li data-n="03">Capture</li>
+        <li data-n="04">Who and when</li>
+        <li data-n="05">Seal</li>
+        <li data-n="06">Waiting</li>
+        <li data-n="07">Ready</li>
+        <li data-n="08">Playback</li>
+      </ol>
+    </div>
+  </header>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 1 · LANDING                                       -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 01 · Pre-connect</p>
+      <h2>Landing.</h2>
+      <p>The first impression. Quiet, typographic, and uncrowded — a single invitation, three reasons, one promise.</p>
+    </div>
+    <div class="right">mnemo.app /</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo<em>.app</em></div>
+      <div class="badge">Encrypted ▢</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <nav class="app-header-right">
+        <a href="#" class="link-quiet">How it works</a>
+        <span class="sep"></span>
+        <a href="#" class="link-quiet">Connect wallet</a>
+      </nav>
+    </header>
+
+    <div class="s1-hero">
+      <div>
+        <p class="eyebrow">01 · A vault for messages that wait</p>
+        <h1>Leave a message for someone — in a year, in a decade, in a <em>lifetime</em>.</h1>
+        <p class="body">Record a video, a voice note, or a letter. Choose who it is for, and when it should open. Mnemo holds it, encrypted, until its time. Some messages are read tomorrow. Some are read in 2065.</p>
+        <a href="#" class="link-primary">Connect your wallet to begin <span class="arrow">→</span></a>
+      </div>
+      <div class="figure" aria-hidden="true">
+        <div class="corner-l">Sealed · Edition 01</div>
+        <div class="corner-r">No. 0017</div>
+        <div class="hair top"></div>
+        <div class="hair bot"></div>
+        <div class="seal-mark">
+          <span class="year">MMXXVI</span>
+          M
+        </div>
+      </div>
+    </div>
+
+    <div class="s1-three">
+      <div class="col">
+        <span class="glyph">τ</span>
+        <h3>Time-locked messages</h3>
+        <p>Choose a date — a birthday, an anniversary, a year — and seal a message that cannot be opened until then.</p>
+      </div>
+      <div class="col">
+        <span class="glyph brass">§</span>
+        <h3>Posthumous releases</h3>
+        <p>Set a quiet check-in. If you stop responding, your messages release themselves — to the people you chose.</p>
+      </div>
+      <div class="col">
+        <span class="glyph sage">⟁</span>
+        <h3>Conditional unlocks</h3>
+        <p>Tie a message to a milestone — a wedding day, a graduation, a child's eighteenth birthday. It opens when the day arrives.</p>
+      </div>
+    </div>
+
+    <div class="s1-quote">
+      <p class="eyebrow midnight section-label" style="margin-bottom:32px;">The promise</p>
+      <p class="h2">Once a message is sealed, it cannot be edited or opened until its appointed time. You can change who receives it; you cannot change <em>what it says</em>.</p>
+    </div>
+
+    <footer class="s1-footer">
+      <div>Mnemo &nbsp;·&nbsp; <span style="color:var(--ink);">An archive for tomorrow.</span></div>
+      <div class="right">
+        <a href="#">Built on Sui</a>
+        <a href="#">Stored on Walrus</a>
+        <a href="#">Powered by Tatum</a>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 2 · VAULT LIST                                    -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 02 · Home, after connect</p>
+      <h2>Your messages.</h2>
+      <p>The home of a returning user. Each card is a sealed message — its title, its recipient, its status, and the moment it will open. Below: the empty state, shown when there is nothing yet to wait for.</p>
+    </div>
+    <div class="right">mnemo.app / messages</div>
+  </div>
+
+  <!-- 2A · Populated -->
+  <p class="variant-label">Variation A · Populated</p>
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/messages</em></div>
+      <div class="badge">0x8e0e…bb6a</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <nav class="app-header-right">
+        <span class="addr">0x8e0e…bb6a</span>
+        <span class="sep"></span>
+        <a href="#" class="link-quiet">Disconnect</a>
+      </nav>
+    </header>
+
+    <div class="vault-head">
+      <div>
+        <p class="eyebrow">Your vault</p>
+        <h1 class="h1" style="margin-top:12px;">Your messages.</h1>
+        <p class="body">Messages you have sealed. They wait until their time.</p>
+      </div>
+      <button class="btn btn-primary">Seal a new message</button>
+    </div>
+
+    <div class="vault-list">
+
+      <article class="vault-card">
+        <div class="vault-seal brass">M</div>
+        <div class="vault-body">
+          <h3 class="vault-title h2">For Eliza, on her eighteenth birthday.</h3>
+          <p class="vault-recipient">
+            <span class="name">Eliza Marlow</span>
+            <span class="sep-dot"></span>
+            <span class="addr">0x8e0e…bb6a</span>
+          </p>
+          <p class="vault-meta">A letter and a short film, recorded in March. <em>4 pages, 6 min 14 s.</em></p>
+        </div>
+        <div class="vault-side">
+          <span class="status brass">
+            <span class="dot"></span> Sealed
+            <span class="divider"></span> Opens in 17 years
+          </span>
+          <p class="small">Opens 14 March 2043</p>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <div class="vault-seal brass">T</div>
+        <div class="vault-body">
+          <h3 class="vault-title h2">For Tomás, when he doubts.</h3>
+          <p class="vault-recipient">
+            <span class="name">Tomás Aguirre</span>
+            <span class="sep-dot"></span>
+            <span class="addr">0xf1a2…0c47</span>
+          </p>
+          <p class="vault-meta">A voice note for the morning of his twenty-first.</p>
+        </div>
+        <div class="vault-side">
+          <span class="status brass">
+            <span class="dot"></span> Sealed
+            <span class="divider"></span> Opens when he turns 21
+          </span>
+          <p class="small">Opens 09 August 2034</p>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <div class="vault-seal brass">⟁</div>
+        <div class="vault-body">
+          <h3 class="vault-title h2">If I am gone.</h3>
+          <p class="vault-recipient">
+            <span class="name">Three recipients</span>
+            <span class="sep-dot"></span>
+            <span class="addr">0x4b8d…ea21, +2</span>
+          </p>
+          <p class="vault-meta">Held by a dead-man's switch. Releases if you stop checking in.</p>
+        </div>
+        <div class="vault-side">
+          <span class="status brass">
+            <span class="dot"></span> Waiting
+            <span class="divider"></span> Last check-in 2 days ago
+          </span>
+          <p class="small">Releases if I am gone for 30 days</p>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <div class="vault-seal sage">A</div>
+        <div class="vault-body">
+          <h3 class="vault-title h2">To my mother, on her seventieth.</h3>
+          <p class="vault-recipient">
+            <span class="name">Aiyana Brooks</span>
+            <span class="sep-dot"></span>
+            <span class="addr">0x2c7e…91d3</span>
+          </p>
+          <p class="vault-meta">Sealed three years ago. Its time has arrived.</p>
+        </div>
+        <div class="vault-side">
+          <span class="status sage">
+            <span class="dot"></span> Open
+            <span class="divider"></span> Ready to be read
+          </span>
+          <p class="small">Opened today &nbsp;·&nbsp; Sealed 22 May 2023</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 2B · Empty -->
+  <p class="variant-label">Variation B · Empty state</p>
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/messages</em></div>
+      <div class="badge">0x8e0e…bb6a</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <nav class="app-header-right">
+        <span class="addr">0x8e0e…bb6a</span>
+        <span class="sep"></span>
+        <a href="#" class="link-quiet">Disconnect</a>
+      </nav>
+    </header>
+
+    <div class="empty-state">
+      <p class="eyebrow" style="margin-bottom:24px;">Your vault</p>
+      <h1 class="h1">Nothing sealed yet.</h1>
+      <p class="body">When you record a message and seal it, it will wait here.</p>
+      <a href="#" class="link-primary">Seal your first message <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 3 · CREATE · STEP 1 (record)                       -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 03 · Create flow · Step 1</p>
+      <h2>Capture.</h2>
+      <p>The screen for recording the actual message. Video is shown — audio and letter are available at the top. Encryption is mentioned plainly, in passing.</p>
+    </div>
+    <div class="right">mnemo.app / new / capture</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/new/capture</em></div>
+      <div class="badge">Step 1 of 3</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <div class="breadcrumb">
+        <a href="#" class="link-quiet">Your messages</a>
+        <span class="sep">/</span>
+        <span class="here">Seal a new message</span>
+      </div>
+      <a href="#" class="icon-close" aria-label="Close"></a>
+    </header>
+
+    <div class="flow-head">
+      <div>
+        <p class="eyebrow brass">Step 1 of 3 · Capture</p>
+        <h1 class="h1">Record your message.</h1>
+        <p class="body">Take your time. This will be encrypted on your device before it leaves.</p>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Recipient (TBD)</p>
+        <p class="small" style="margin-top:8px;">You'll choose who this is for next.</p>
+      </div>
+    </div>
+
+    <div class="flow-body">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active">Video</button>
+        <button class="tab">Audio</button>
+        <button class="tab">Letter</button>
+      </div>
+
+      <div class="viewport" aria-hidden="true">
+        <div class="corner tl"><span class="rec-dot"></span> Camera · Ready</div>
+        <div class="corner tr">1920 × 1080</div>
+        <div class="corner bl">Encrypted in-browser</div>
+        <div class="corner br">Mic · Built-in</div>
+        <div class="silhouette"></div>
+      </div>
+
+      <div class="record-controls">
+        <div class="timer">
+          <span class="label">Duration</span>
+          00:00
+        </div>
+        <button class="record-btn" aria-label="Start recording"></button>
+        <div class="timer" style="text-align:right;">
+          <span class="label">Max</span>
+          15:00
+        </div>
+      </div>
+
+      <p class="privacy-note">Encrypted on this device. Never seen by us.</p>
+    </div>
+
+    <div class="flow-footer">
+      <button class="btn btn-ghost">← Back</button>
+      <button class="btn btn-primary" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 4 · CREATE · STEP 2 (configure)                    -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 04 · Create flow · Step 2</p>
+      <h2>Who, and when.</h2>
+      <p>The conceptually richest step: who receives this, and the rules that govern when it opens. The dead-man's switch is one sentence with an editable number — not a thicket of controls.</p>
+    </div>
+    <div class="right">mnemo.app / new / unlock</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/new/unlock</em></div>
+      <div class="badge">Step 2 of 3</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <div class="breadcrumb">
+        <a href="#" class="link-quiet">Your messages</a>
+        <span class="sep">/</span>
+        <a href="#" class="link-quiet">Seal a new message</a>
+        <span class="sep">/</span>
+        <span class="here">Who and when</span>
+      </div>
+      <a href="#" class="icon-close" aria-label="Close"></a>
+    </header>
+
+    <div class="flow-head">
+      <div>
+        <p class="eyebrow brass">Step 2 of 3 · Who and when</p>
+        <h1 class="h1">Who is this for, and when should it open?</h1>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Message captured</p>
+        <p class="small" style="margin-top:8px;">6 min 14 s · video · 24 MB</p>
+      </div>
+    </div>
+
+    <div class="configure">
+
+      <!-- Section A · Recipient -->
+      <div class="config-section">
+        <div>
+          <h3>Recipient</h3>
+          <p class="h-note">Who will receive this. You can change this until the message is sealed.</p>
+        </div>
+        <div>
+          <div class="field">
+            <label class="field-label" for="addr-field">Recipient address</label>
+            <input id="addr-field" class="input mono" type="text" value="0x8e0e7c2c4dfb1f1a4e9cb01a9c8d2a6f0e7bba4b94d3e2f5a1c8d9e0f3a7bb6a" />
+            <p class="field-hint">The Sui address of the person who should receive this.</p>
+          </div>
+          <div class="field">
+            <label class="field-label" for="title-field">Title <span style="color:var(--stone);font-weight:400;">— visible to you only, not encrypted</span></label>
+            <input id="title-field" class="input" type="text" placeholder="e.g. For Eliza, on her eighteenth birthday" value="For Eliza, on her eighteenth birthday" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B · Time lock -->
+      <div class="config-section">
+        <div>
+          <h3>Open on a specific date</h3>
+          <p class="h-note">The earliest moment the message can be opened. Cannot be moved earlier once sealed.</p>
+        </div>
+        <div>
+          <div class="toggle" role="group" aria-label="Time lock">
+            <span class="opt">Off</span>
+            <span class="opt on">On</span>
+          </div>
+          <div class="date-display">
+            <p class="date">14 March 2043</p>
+            <a href="#" class="change">Change date</a>
+          </div>
+          <p class="field-hint" style="margin-top:16px;">Earliest moment this can be opened. <span style="font-style:italic;color:var(--ink);">17 years, 3 months from today.</span></p>
+        </div>
+      </div>
+
+      <!-- Section C · Dead-man's switch -->
+      <div class="config-section">
+        <div>
+          <h3>Release if I go silent</h3>
+          <p class="h-note">A quiet check-in. If you stop responding, this message will release itself.</p>
+        </div>
+        <div>
+          <div class="toggle" role="group" aria-label="Dead-man's switch">
+            <span class="opt">Off</span>
+            <span class="opt on">On</span>
+          </div>
+          <p class="switch-sentence">Release if I have not checked in for <span class="num">30</span> days.</p>
+          <p class="field-hint" style="margin-top:16px;">You'll receive reminders to check in. If you stop, the message will be released — whether or not the date above has passed.</p>
+        </div>
+      </div>
+
+      <div class="product-line">
+        <p>Once a message is sealed, it cannot be edited or opened until its appointed time. You can change who receives it; you cannot change <em>what it says</em>.</p>
+      </div>
+
+    </div>
+
+    <div class="flow-footer">
+      <button class="btn btn-ghost">← Back</button>
+      <button class="btn btn-primary">Continue</button>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 5 · CREATE · STEP 3 (review & seal)                -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 05 · Create flow · Step 3</p>
+      <h2>Ready to seal.</h2>
+      <p>The moment of commitment. The summary is read like a record, not a form. The action is deliberate — disabled until the user confirms they understand.</p>
+    </div>
+    <div class="right">mnemo.app / new / seal</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/new/seal</em></div>
+      <div class="badge">Step 3 of 3</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <div class="breadcrumb">
+        <a href="#" class="link-quiet">Your messages</a>
+        <span class="sep">/</span>
+        <a href="#" class="link-quiet">Seal a new message</a>
+        <span class="sep">/</span>
+        <span class="here">Seal</span>
+      </div>
+      <a href="#" class="icon-close" aria-label="Close"></a>
+    </header>
+
+    <div class="flow-head">
+      <div>
+        <p class="eyebrow brass">Step 3 of 3 · Seal</p>
+        <h1 class="h1">Ready to seal.</h1>
+        <p class="body">A last look before it goes to the vault.</p>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Estimated network fee</p>
+        <p class="small" style="margin-top:8px;font-family:var(--mono);color:var(--ink);">0.04 SUI &nbsp;·&nbsp; ~ $0.10</p>
+      </div>
+    </div>
+
+    <div class="flow-body" style="padding-top:0;">
+
+      <div class="summary-card">
+        <div class="summary-row">
+          <div class="k">Recipient</div>
+          <div class="v"><span class="addr">0x8e0e…bb6a</span><span class="muted">·</span> <strong style="font-weight:500;">Eliza Marlow</strong></div>
+        </div>
+        <div class="summary-row">
+          <div class="k">Title</div>
+          <div class="v serif">For Eliza, on her eighteenth birthday.</div>
+        </div>
+        <div class="summary-row">
+          <div class="k">Opens</div>
+          <div class="v"><span class="serif" style="font-family:var(--serif);font-style:italic;color:var(--midnight);font-size:22px;">14 March 2043</span> &nbsp;<span class="muted">— 17 years, 3 months from today.</span></div>
+        </div>
+        <div class="summary-row">
+          <div class="k">Dead-man's switch</div>
+          <div class="v">Off</div>
+        </div>
+        <div class="summary-row">
+          <div class="k">Contents</div>
+          <div class="v">Video · 6 min 14 s &nbsp;<span class="muted">·</span>&nbsp; 24 MB &nbsp;<span class="muted">·</span>&nbsp; encrypted</div>
+        </div>
+        <div class="summary-row">
+          <div class="k">Held by</div>
+          <div class="v">Sui &nbsp;<span class="muted">·</span>&nbsp; stored on Walrus</div>
+        </div>
+      </div>
+
+      <div class="seal-statement">
+        <p class="h2">Sealing this will publish it to a public, decentralized network. Once sealed, it cannot be <em>edited</em>.</p>
+
+        <label class="checkbox checked">
+          <span class="box"></span>
+          <span>I understand.</span>
+        </label>
+
+        <div class="seal-actions">
+          <button class="btn btn-ghost">← Back</button>
+          <button class="seal-btn">Seal this message</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 6 · RECIPIENT · WAITING                             -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 06 · Recipient view</p>
+      <h2>A message is waiting.</h2>
+      <p>What the recipient sees when they connect their wallet and there's a message waiting — but not yet unlockable. The countdown is a sentence, not a digital clock.</p>
+    </div>
+    <div class="right">mnemo.app / for-you / 0x91…3f7</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/for-you/0x91…3f7</em></div>
+      <div class="badge">0x91…3f7</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <nav class="app-header-right">
+        <span class="addr">0x91…3f7</span>
+        <span class="sep"></span>
+        <a href="#" class="link-quiet">Disconnect</a>
+      </nav>
+    </header>
+
+    <div class="recipient-stage">
+      <div class="seal-ornament" aria-hidden="true">M</div>
+      <p class="eyebrow brass">A message is waiting for you</p>
+      <h1 class="display">For Eliza, on her eighteenth birthday.</h1>
+      <p class="from">From <span class="name">Sarah Chen</span> &nbsp;·&nbsp; sealed 14 March 2026</p>
+
+      <p class="countdown">Opens in 17 years, 3 months, 12 days.</p>
+      <p class="countdown-date">14 March 2043</p>
+
+      <p class="recipient-note">This message is encrypted. Only you can open it, when its time comes.</p>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 7 · RECIPIENT · UNLOCKED                            -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 07 · Recipient view · Unlocked</p>
+      <h2>Ready to be opened.</h2>
+      <p>The emotional payoff. The same composition as Screen 6, but its time has come. The action is an invitation, set in serif italic — not a button.</p>
+    </div>
+    <div class="right">mnemo.app / for-you / 0x91…3f7</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/for-you/0x91…3f7</em></div>
+      <div class="badge">0x91…3f7</div>
+    </div>
+
+    <header class="app-header">
+      <a class="wordmark" href="#">Mn<em>e</em>mo</a>
+      <nav class="app-header-right">
+        <span class="addr">0x91…3f7</span>
+        <span class="sep"></span>
+        <a href="#" class="link-quiet">Disconnect</a>
+      </nav>
+    </header>
+
+    <div class="recipient-stage">
+      <div class="seal-ornament sage" aria-hidden="true">M</div>
+      <p class="eyebrow sage">Ready to be opened</p>
+      <h1 class="display">For Eliza, on her eighteenth birthday.</h1>
+      <p class="from">From <span class="name">Sarah Chen</span> &nbsp;·&nbsp; sealed 14 March 2026 &nbsp;·&nbsp; opened today</p>
+
+      <div style="margin: 24px 0 32px;">
+        <a href="#" class="open-invitation">Open the message</a>
+      </div>
+
+      <p class="recipient-note">Once opened, this is yours to keep.</p>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 8 · PLAYBACK                                        -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="screen-meta">
+    <div class="left">
+      <p class="eyebrow">Screen 08 · Playback</p>
+      <h2>The message itself.</h2>
+      <p>The chrome disappears. The message is the thing. A small wordmark anchors the page; everything else stands back.</p>
+    </div>
+    <div class="right">mnemo.app / for-you / 0x91…3f7 / open</div>
+  </div>
+
+  <section class="screen">
+    <div class="screen__url">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="addr">mnemo.app<em>/for-you/0x91…3f7/open</em></div>
+      <div class="badge">Decrypted on your device</div>
+    </div>
+
+    <header class="playback-header">
+      <a class="wordmark" href="#" style="font-size:22px;">Mn<em>e</em>mo</a>
+    </header>
+
+    <div class="playback-stage">
+      <div class="player">
+        <div class="video">
+          <div class="glow"></div>
+          <div class="play-overlay" aria-hidden="true">
+            <div class="triangle"></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="pp" aria-label="Play">
+            <span class="tri"></span>
+          </button>
+          <div class="timecode">01:32</div>
+          <div class="scrub"></div>
+          <div class="timecode">06:14</div>
+          <div class="vol">— Volume</div>
+        </div>
+      </div>
+
+      <div class="playback-meta">
+        <h2 class="h2">For Eliza, on her eighteenth birthday.</h2>
+        <p class="small">Recorded by <span style="color:var(--ink);">Sarah Chen</span> on 14 March 2026 &nbsp;·&nbsp; Decrypted on your device</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Colophon ─────────────────────────────────────────── -->
+  <footer class="colophon">
+    <div>Mnemo &nbsp;·&nbsp; Product Screens · v1.0</div>
+    <div style="text-align:center;">Set in Newsreader &amp; IBM Plex</div>
+    <div class="right">May 2026</div>
+  </footer>
+
+</main>
+</body>
+</html>
