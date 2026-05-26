@@ -27,6 +27,16 @@ export function addrEq(a: string | undefined | null, b: string | undefined | nul
   return a.toLowerCase() === b.toLowerCase()
 }
 
+/** True iff this vault is sealed, has a dead-man's switch, the window hasn't fired,
+ *  AND the requester is the creator (only creators can check in). */
+export function isWaitingForCheckin(v: VaultRecord, addr: string | undefined): boolean {
+  if (!addr) return false
+  if (v.status !== 'SEALED') return false
+  if (!v.requiresCheckin) return false
+  if (v.isUnlockable) return false
+  return addrEq(v.creator, addr)
+}
+
 type SealedEventJson = {
   vault_id: string
   creator: string

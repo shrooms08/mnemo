@@ -838,6 +838,87 @@ a.vault-card-link:focus-visible .vault-card {
 .playback-meta .small { font-size: 13px; color: var(--stone); }
 .playback-meta .small .name { color: var(--ink); }
 
+/* ── Check-in affordance ────────────────────────────────── */
+.checkin-link {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sage);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease, color 120ms ease;
+  align-self: flex-end;
+}
+.checkin-link:hover { border-bottom-color: var(--sage); }
+.checkin-link:disabled { cursor: default; }
+.checkin-link.pending {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--stone);
+  cursor: default;
+  border-bottom-color: transparent;
+}
+.checkin-link.success {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--sage);
+  cursor: default;
+  border-bottom-color: transparent;
+}
+.checkin-link.error {
+  color: var(--brass);
+  border-bottom-color: transparent;
+}
+
+.vault-card.recent-checkin {
+  border-color: var(--sage);
+  animation: recent-flash 800ms ease;
+}
+@keyframes recent-flash {
+  0%   { background: var(--paper-2); }
+  20%  { background: rgba(107, 123, 94, 0.10); }
+  100% { background: var(--paper-2); }
+}
+
+.status .critical-time {
+  color: var(--ink);
+  font-weight: 700;
+}
+.meta-warning {
+  color: var(--sage);
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+.vault-head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.batch-error {
+  color: var(--brass);
+  font-size: 13px;
+  text-align: right;
+  margin: 0 0 var(--s3);
+}
+.btn-ghost-card {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--paper-2);
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 14px 22px;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.btn-ghost-card:hover { background: var(--mist); }
+.btn-ghost-card:disabled { color: var(--stone); cursor: not-allowed; }
+
 /* ── Tagline footer ─────────────────────────────────────── */
 .tagline-footer {
   margin-top: var(--s7);
