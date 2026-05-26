@@ -947,11 +947,11 @@ a.vault-card-link:focus-visible .vault-card {
 }
 
 .s1-hero {
-  padding: var(--s9) var(--s8) var(--s9);
+  padding: var(--s7) var(--s8) var(--s9);
   display: grid;
   grid-template-columns: 1.15fr 1fr;
   gap: var(--s8);
-  align-items: end;
+  align-items: start;
   border-bottom: 1px solid var(--mist);
 }
 .s1-hero h1 {
