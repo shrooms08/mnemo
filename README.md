@@ -55,7 +55,7 @@ Three layers, each doing exactly one job.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Browser  (React + Web Crypto + dapp-kit)                   │
-│  ─ recording, encryption, wallet signing, decryption         │
+│  ─ recording, encryption, wallet signing, decryption        │
 └─────────────────────────────────────────────────────────────┘
                             │
             ┌───────────────┴────────────────┐
