@@ -58,6 +58,10 @@ export function Inbox() {
           ))}
         </div>
       )}
+
+      <footer className="tagline-footer">
+        Built on Sui · Stored on Walrus · Powered by Tatum
+      </footer>
     </>
   )
 }

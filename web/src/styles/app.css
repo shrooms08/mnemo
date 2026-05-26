@@ -838,6 +838,17 @@ a.vault-card-link:focus-visible .vault-card {
 .playback-meta .small { font-size: 13px; color: var(--stone); }
 .playback-meta .small .name { color: var(--ink); }
 
+/* ── Tagline footer ─────────────────────────────────────── */
+.tagline-footer {
+  margin-top: var(--s7);
+  padding: var(--s5) var(--s8);
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--stone);
+  letter-spacing: 0.04em;
+}
+
 /* ── Configure layout ───────────────────────────────────── */
 .configure {
   padding: var(--s8) var(--s8);
