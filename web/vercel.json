@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/rpc/sui-testnet", "destination": "/api/sui-testnet" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
